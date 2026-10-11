@@ -1,7 +1,7 @@
 import type { Request, RequestHandler } from 'express';
 import { UnauthorizedError } from '../errors/app-error';
 import type { AuthService } from '../modules/auth/auth.service';
-import type { Principal } from '../modules/auth/principal';
+import type { Principal } from '../modules/auth/auth.types';
 
 const BEARER_TOKEN = /^Bearer\s+(\S+)$/i;
 
@@ -16,6 +16,7 @@ export function createRequireAuth(auth: AuthService): RequestHandler {
 }
 
 export function getPrincipal(req: Request): Principal {
-  if (!req.principal) throw new UnauthorizedError('Missing bearer token');
+  if (!req.principal)
+    throw new Error('getPrincipal called on a route not protected by requireAuth');
   return req.principal;
 }

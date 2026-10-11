@@ -1,15 +1,15 @@
 import { randomUUID } from 'node:crypto';
 import { UnauthorizedError } from '../../errors/app-error';
-import type { UserRepository } from '../users/user.repository';
+import type { UserStore } from '../users/user.types';
 import { hashPassword, verifyPassword } from './password';
-import type { Principal } from './principal';
+import type { Principal } from './auth.types';
 import type { IssuedToken, TokenService } from './token.service';
 
 export class AuthService {
   private readonly dummyHash = hashPassword(randomUUID());
 
   constructor(
-    private readonly users: UserRepository,
+    private readonly users: UserStore,
     private readonly tokens: TokenService,
   ) {}
 
@@ -29,7 +29,6 @@ export class AuthService {
     const { userId } = this.tokens.verify(token);
     const user = await this.users.findProfileById(userId);
     if (!user) throw new UnauthorizedError('Invalid token');
-
-    return { userId: user.id, role: user.role, country: user.country, libraryIds: user.libraryIds };
+    return user;
   }
 }

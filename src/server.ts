@@ -37,6 +37,7 @@ async function start(): Promise<void> {
       authService,
       bookService: new BookService(new BookRepository()),
       feedService: new FeedService(new FeedRepository()),
+      trustProxyHops: env.TRUST_PROXY_HOPS,
     });
     const server = await startHttpServer(app, env.PORT);
     lifecycle.onShutdown(() => closeHttpServer(server));

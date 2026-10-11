@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import request from 'supertest';
 import { z } from 'zod';
-import type { BookRecord } from '../src/modules/books/book.repository';
+import type { BookRecord } from '../src/modules/books/book.types';
 import { computeRankScore } from '../src/modules/books/rank-score';
 import { ADMIN, buildTestApp, FOREIGN_LIBRARY_ID } from './helpers/test-app';
 
@@ -92,6 +92,19 @@ describe('POST /books', () => {
     assert.equal(res.status, 403);
     assert.equal(books.create.callCount, 0);
   });
+
+  it('treats ids case-insensitively when checking membership', async () => {
+    const { app, books, authorize } = buildTestApp();
+    books.create.resolves(stored);
+
+    const res = await request(app)
+      .post('/books')
+      .set('Authorization', authorize(ADMIN))
+      .send({ ...input, libraryId: CENTRAL_LIBRARY_ID.toUpperCase() });
+
+    assert.equal(res.status, 201);
+    assert.equal(books.create.firstCall.args[0].libraryId, CENTRAL_LIBRARY_ID);
+  });
 });
 
 describe('GET /books/:id', () => {
@@ -138,7 +151,7 @@ describe('GET /books', () => {
     const firstPage = await request(app).get('/books?limit=2').set('Authorization', auth);
     const nextLink = /^<([^>]+)>; rel="next"$/.exec(firstPage.get('Link') ?? '')?.[1];
     const secondPage = await request(app)
-      .get(nextLink ?? '')
+      .get(`/books${nextLink ?? ''}`)
       .set('Authorization', auth);
 
     assert.equal(firstPage.status, 200);

@@ -10,6 +10,8 @@ Created 2026-10-07. Tasks run one at a time, on the owner's command. Every decis
 
 All tasks T1–T9 are complete as of 2026-10-11. The README was verified on a fresh clone: `npm ci`, `npm run check`, `npm run test:int` and the Docker quick start with every curl example.
 
+A post-delivery code review found 15 issues; all were fixed on 2026-10-11 (ADR 0016).
+
 ## Scope (from the assignment)
 
 - REST CRUD for Books (Express + TypeScript + Mongoose). Users and Libraries are seeded only.

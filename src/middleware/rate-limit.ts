@@ -11,6 +11,7 @@ export function createLoginRateLimiter(): RequestHandler {
     limit: LOGIN_ATTEMPTS_PER_WINDOW,
     standardHeaders: 'draft-8',
     legacyHeaders: false,
+    validate: { xForwardedForHeader: false },
     handler: (_req, _res, next) => {
       next(new TooManyRequestsError('Too many login attempts, try again later'));
     },

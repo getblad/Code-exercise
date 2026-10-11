@@ -1,7 +1,13 @@
 import { z } from 'zod';
-import { objectIdSchema } from '../../validation/schemas';
+import { objectIdSchema, paginationQuerySchema } from '../../validation/schemas';
+
+const EARLIEST_TIMEZONE_OFFSET_MS = 14 * 60 * 60 * 1000;
 
 const text = z.string().trim().min(1).max(200);
+
+// UTC+14 reaches a new day first, so its calendar date is the latest "today" anywhere on Earth
+const latestToday = (): string =>
+  new Date(Date.now() + EARLIEST_TIMEZONE_OFFSET_MS).toISOString().slice(0, 10);
 
 export const bookInputSchema = z.strictObject({
   title: text,
@@ -15,18 +21,16 @@ export const bookInputSchema = z.strictObject({
     .default(null),
   publishedDate: z.iso
     .date()
-    .transform((date) => new Date(`${date}T00:00:00.000Z`))
-    .refine((date) => date.getTime() <= Date.now(), 'must not be in the future'),
+    .refine((date) => date <= latestToday(), 'must not be in the future')
+    .transform((date) => new Date(`${date}T00:00:00.000Z`)),
   pages: z.number().int().min(1).max(100_000),
   libraryId: objectIdSchema,
 });
 
 export const bookIdParamsSchema = z.object({ id: objectIdSchema });
 
-export const listBooksQuerySchema = z.object({
+export const listBooksQuerySchema = paginationQuerySchema.extend({
   libraryId: objectIdSchema.optional(),
-  limit: z.coerce.number().int().min(1).max(100).default(20),
-  cursor: z.string().max(512).optional(),
 });
 
 export const bookCursorSchema = z.strictObject({ afterId: objectIdSchema });

@@ -1,27 +1,8 @@
 import { Types } from 'mongoose';
 import { type Book, BookModel } from './book.model';
+import type { BookData, BookRecord, BookStore, ListBooksQuery } from './book.types';
 
-export interface BookRecord {
-  id: string;
-  title: string;
-  author: string;
-  authorCountry: string | null;
-  publishedDate: Date;
-  pages: number;
-  libraryId: string;
-}
-
-export interface BookData extends Omit<BookRecord, 'id'> {
-  rankScore: number;
-}
-
-export interface ListBooksQuery {
-  libraryIds: string[];
-  afterId: string | undefined;
-  limit: number;
-}
-
-export class BookRepository {
+export class BookRepository implements BookStore {
   async create(data: BookData): Promise<BookRecord> {
     const book = await BookModel.create(toDocument(data));
     return toBookRecord(book.toObject());

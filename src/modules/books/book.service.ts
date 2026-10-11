@@ -1,7 +1,7 @@
 import { ForbiddenError, NotFoundError } from '../../errors/app-error';
-import type { Principal } from '../auth/principal';
+import type { Principal } from '../auth/auth.types';
 import type { BookInput } from './book.schemas';
-import type { BookData, BookRecord, BookRepository } from './book.repository';
+import type { BookData, BookRecord, BookStore } from './book.types';
 import { computeRankScore } from './rank-score';
 
 export interface ListBooksOptions {
@@ -16,7 +16,7 @@ export interface BookPage {
 }
 
 export class BookService {
-  constructor(private readonly books: BookRepository) {}
+  constructor(private readonly books: BookStore) {}
 
   async create(principal: Principal, input: BookInput): Promise<BookRecord> {
     assertMember(principal, input.libraryId);

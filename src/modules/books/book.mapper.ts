@@ -1,4 +1,4 @@
-import type { BookRecord } from './book.repository';
+import type { BookRecord } from './book.types';
 
 export interface BookResponse {
   id: string;

@@ -1,22 +1,28 @@
 import { existsSync } from 'node:fs';
 import { z } from 'zod';
 
+export const mongoUriSchema = z
+  .string()
+  .regex(/^mongodb(\+srv)?:\/\//, 'must be a mongodb:// or mongodb+srv:// URI');
+
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().min(1).max(65535).default(3000),
   LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
-  MONGO_URI: z
-    .string()
-    .regex(/^mongodb(\+srv)?:\/\//, 'must be a mongodb:// or mongodb+srv:// URI'),
+  MONGO_URI: mongoUriSchema,
   SEED_ON_STARTUP: z.stringbool().default(false),
   JWT_SECRET: z.string().min(32),
   JWT_TTL_SECONDS: z.coerce.number().int().positive().default(3600),
+  TRUST_PROXY_HOPS: z.coerce.number().int().min(0).default(0),
 });
 
 export type Env = z.infer<typeof envSchema>;
 
-export function loadEnv(envFile = '.env'): Env {
+export function loadDotEnv(envFile = '.env'): void {
   if (existsSync(envFile)) process.loadEnvFile(envFile);
+}
+
+export function loadEnv(): Env {
+  loadDotEnv();
   return parseEnv(process.env);
 }
 

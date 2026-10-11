@@ -1,16 +1,15 @@
 import { parseArgs } from 'node:util';
-import mongoose, { type Types } from 'mongoose';
+import type { Types } from 'mongoose';
 import { z } from 'zod';
-import { createLogger } from '../infrastructure/logger';
 import { BookModel } from '../modules/books/book.model';
 import { computeRankScore } from '../modules/books/rank-score';
+import { runMongoScript } from './run-script';
 import { LIBRARY_IDS } from './seed-data';
 
 const COUNTRIES = ['US', 'GB', 'DE', 'FR', 'ES', 'IT', 'JP', 'BR', 'IN', null];
 const PROGRESS_EVERY = 100_000;
-const logger = createLogger('info');
 
-async function main(): Promise<void> {
+runMongoScript('bulk-books', async (logger) => {
   const { values } = parseArgs({
     options: {
       count: { type: 'string', default: '1000000' },
@@ -19,12 +18,7 @@ async function main(): Promise<void> {
   });
   const count = z.coerce.number().int().positive().parse(values.count);
   const batchSize = z.coerce.number().int().positive().parse(values.batch);
-  const uri = z
-    .string()
-    .regex(/^mongodb(\+srv)?:\/\//)
-    .parse(process.env.MONGO_URI);
 
-  await mongoose.connect(uri);
   await BookModel.init();
   const libraries = Object.values(LIBRARY_IDS);
   const startedAt = Date.now();
@@ -41,8 +35,7 @@ async function main(): Promise<void> {
 
   const seconds = (Date.now() - startedAt) / 1000;
   logger.info({ count, seconds, perSecond: Math.round(count / seconds) }, 'Bulk insert complete');
-  await mongoose.disconnect();
-}
+});
 
 function randomBook(sequence: number, libraries: readonly Types.ObjectId[]) {
   const pages = 50 + Math.floor(Math.random() * 1450);
@@ -69,8 +62,3 @@ function pick<T>(items: readonly T[], index: number): T {
   if (item === undefined) throw new Error('Cannot pick from an empty list');
   return item;
 }
-
-main().catch((err: unknown) => {
-  logger.fatal({ err }, 'Bulk insert failed');
-  process.exitCode = 1;
-});

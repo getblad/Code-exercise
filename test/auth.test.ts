@@ -3,7 +3,7 @@ import sinon from 'sinon';
 import request from 'supertest';
 import { z } from 'zod';
 import { hashPassword, verifyPassword } from '../src/modules/auth/password';
-import type { UserCredentials } from '../src/modules/users/user.repository';
+import type { UserCredentials } from '../src/modules/users/user.types';
 import { ADMIN, buildTestApp } from './helpers/test-app';
 
 const tokenResponse = z.strictObject({

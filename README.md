@@ -43,18 +43,19 @@ npm run dev                 # tsx watch mode with pretty-printed logs
 
 ## Configuration
 
-| Variable          | Required | Default       | Purpose                                                      |
-| ----------------- | -------- | ------------- | ------------------------------------------------------------ |
-| `MONGO_URI`       | yes      | —             | `mongodb://` or `mongodb+srv://` connection string           |
-| `JWT_SECRET`      | yes      | —             | HS256 signing secret, at least 32 characters                 |
-| `JWT_TTL_SECONDS` | no       | `3600`        | Token lifetime                                               |
-| `PORT`            | no       | `3000`        | HTTP port                                                    |
-| `LOG_LEVEL`       | no       | `info`        | `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `silent` |
-| `SEED_ON_STARTUP` | no       | `false`       | Insert the demo libraries, users and books if missing        |
-| `NODE_ENV`        | no       | `development` | `development`, `test` or `production`                        |
+| Variable           | Required | Default | Purpose                                                                                             |
+| ------------------ | -------- | ------- | --------------------------------------------------------------------------------------------------- |
+| `MONGO_URI`        | yes      | —       | `mongodb://` or `mongodb+srv://` connection string                                                  |
+| `JWT_SECRET`       | yes      | —       | HS256 signing secret, at least 32 characters                                                        |
+| `JWT_TTL_SECONDS`  | no       | `3600`  | Token lifetime                                                                                      |
+| `PORT`             | no       | `3000`  | HTTP port                                                                                           |
+| `LOG_LEVEL`        | no       | `info`  | `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `silent`                                        |
+| `SEED_ON_STARTUP`  | no       | `false` | Insert the demo data once, on the first start against an empty database                             |
+| `TRUST_PROXY_HOPS` | no       | `0`     | Number of reverse proxies in front of the API, so client IPs (and the login rate limit) are correct |
 
 - Invalid configuration stops startup with exit code 1, naming each bad variable but never its value.
-- Under Docker, `docker-compose.yml` sets `MONGO_URI`, `PORT`, `NODE_ENV` and `SEED_ON_STARTUP` itself, and the secrets come from `.env`.
+- Under Docker, `docker-compose.yml` sets `MONGO_URI`, `PORT`, `NODE_ENV=production` and `SEED_ON_STARTUP` itself, and the secrets come from `.env`.
+- The seed records a `seed_runs` marker after it runs, so later restarts never re-insert demo books that were deleted through the API.
 
 ## Demo data
 
@@ -128,7 +129,7 @@ Unknown fields are rejected.
 
 ### Pagination
 
-List endpoints return a plain JSON array (`[]` when nothing matches). When more results exist, the response carries a header such as `Link: </feed?limit=10&cursor=…>; rel="next"`. Follow that URL as-is. The cursor is opaque, and paging costs the same at any depth.
+List endpoints return a plain JSON array (`[]` when nothing matches). When more results exist, the response carries a header such as `Link: <?limit=10&cursor=…>; rel="next"`. It is a relative reference: resolve it against the URL you requested (`/feed` becomes `/feed?limit=10&cursor=…`), which also works behind a path-prefixing proxy. The cursor is opaque, and paging costs the same at any depth.
 
 ### Errors
 
@@ -162,8 +163,8 @@ Each response echoes its `X-Request-Id`, which matches the `requestId` in error 
 2. Books whose `authorCountry` matches the user's country come first, then all others.
 3. Within each group, books are ordered by score:
    - 80% pages, capped at 2000.
-   - 20% age, where 100 years counts as 1.
-   - One year of age is worth five pages.
+   - 20% age, where 500 years counts as 1, so both parts span roughly 0 to 1 and pages really carry four times the weight.
+   - One year of age is worth one page.
 4. Each book stores its score when it is written. Age is measured from a fixed point, not from "now", so the order never changes over time and can be indexed.
 5. Each group is read with its own index already in score order, with no sorting at request time, and pages continue from a cursor.
 
@@ -222,7 +223,8 @@ src/
   errors/              AppError hierarchy
   http/                cursor encoding and Link header
   validation/          zod request parsing and shared schemas
-  modules/             auth, users, libraries, books, feed, health
+  modules/             auth, users, libraries, books, feed, health; each service depends on a store
+                       interface in *.types.ts, which its Mongoose repository implements
   seed/                demo data and bulk loader
 test/                  unit tests, helpers and integration/
 docs/adr/              architecture decision records
@@ -230,14 +232,15 @@ docs/adr/              architecture decision records
 
 ## Scripts
 
-| Script                                  | Purpose                                      |
-| --------------------------------------- | -------------------------------------------- |
-| `npm run dev`                           | Run with reload and pretty logs              |
-| `npm run build` / `npm start`           | Compile to `dist/` / run the compiled server |
-| `npm run check`                         | Lint, format check and unit tests            |
-| `npm test` / `test:int` / `coverage`    | Unit, integration, or both with coverage     |
-| `npm run lint` / `format` / `typecheck` | Individual quality tools                     |
-| `npm run seed:bulk -- --count N`        | Insert N random books (`MONGO_URI` required) |
+| Script                                  | Purpose                                                            |
+| --------------------------------------- | ------------------------------------------------------------------ |
+| `npm run dev`                           | Run with reload and pretty logs                                    |
+| `npm run build` / `npm start`           | Compile to `dist/` / run the compiled server                       |
+| `npm run check`                         | Lint, format check and unit tests                                  |
+| `npm test` / `test:int` / `coverage`    | Unit, integration, or both with coverage                           |
+| `npm run lint` / `format` / `typecheck` | Individual quality tools                                           |
+| `npm run seed:bulk -- --count N`        | Insert N random books (`MONGO_URI` from the environment or `.env`) |
+| `npm run rank:recompute`                | Recompute every stored score after the scoring constants change    |
 
 ## Architecture decisions
 
@@ -260,3 +263,4 @@ Every significant decision is recorded in [`docs/adr`](docs/adr). The task plan 
 | [0013](docs/adr/0013-feed-query.md)                          | Feed query: two index-ordered phases           |
 | [0014](docs/adr/0014-containerization.md)                    | Containerization                               |
 | [0015](docs/adr/0015-integration-tests-and-scale-proof.md)   | Integration tests and scale proof              |
+| [0016](docs/adr/0016-code-review-corrections.md)             | Code review corrections                        |

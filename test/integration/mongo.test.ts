@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { MongoMemoryServer } from 'mongodb-memory-server-core';
 import mongoose, { Types } from 'mongoose';
 import { z } from 'zod';
-import type { Principal } from '../../src/modules/auth/principal';
+import type { Principal } from '../../src/modules/auth/auth.types';
 import { type Book, BookModel } from '../../src/modules/books/book.model';
 import { BookRepository } from '../../src/modules/books/book.repository';
 import { computeRankScore } from '../../src/modules/books/rank-score';
@@ -75,7 +75,9 @@ describe('MongoDB integration', () => {
   });
 
   after(async () => {
-    await mongoose.connection.dropDatabase();
+    if (mongoose.connection.readyState === mongoose.ConnectionStates.connected) {
+      await mongoose.connection.dropDatabase();
+    }
     await mongoose.disconnect();
     await server?.stop();
   });
@@ -145,7 +147,7 @@ describe('MongoDB integration', () => {
     const docs = [...varied, ...tiedSameCountry];
     await BookModel.insertMany(docs);
     const principal: Principal = {
-      userId: new Types.ObjectId().toString(),
+      id: new Types.ObjectId().toString(),
       role: 'user',
       country: 'US',
       libraryIds: MEMBER_LIBRARY_IDS,

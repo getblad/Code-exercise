@@ -3,8 +3,8 @@ import request from 'supertest';
 import { z } from 'zod';
 import { encodeCursor } from '../src/http/pagination';
 import { computeRankScore } from '../src/modules/books/rank-score';
-import type { RankedBook } from '../src/modules/feed/feed.repository';
-import type { UserProfile } from '../src/modules/users/user.repository';
+import type { RankedBook } from '../src/modules/feed/feed.types';
+import type { UserProfile } from '../src/modules/users/user.types';
 import { ADMIN, buildTestApp } from './helpers/test-app';
 
 const date = (iso: string) => new Date(iso);
@@ -60,9 +60,9 @@ describe('computeRankScore', () => {
     );
   });
 
-  it('weights pages 80% and age 20%, so one year of age is worth five pages', () => {
+  it('weights pages 80% and age 20%, so one year of age is worth one page', () => {
     const shorterButOlder = computeRankScore(300, date('1949-01-01'));
-    const longerButNewer = computeRankScore(305, date('1950-01-01'));
+    const longerButNewer = computeRankScore(301, date('1950-01-01'));
 
     assert.ok(Math.abs(shorterButOlder - longerButNewer) < 1e-5);
   });
@@ -80,7 +80,7 @@ describe('GET /feed', () => {
 
     const firstPage = await request(app).get('/feed?limit=3').set('Authorization', auth);
     const secondPage = await request(app)
-      .get(nextLinkOf(firstPage.get('Link')) ?? '')
+      .get(`/feed${nextLinkOf(firstPage.get('Link')) ?? ''}`)
       .set('Authorization', auth);
 
     assert.deepEqual(idsOf(firstPage.body), [localTop.id, localNext.id, foreignTop.id]);
@@ -108,7 +108,7 @@ describe('GET /feed', () => {
 
     const firstPage = await request(app).get('/feed?limit=2').set('Authorization', auth);
     const secondPage = await request(app)
-      .get(nextLinkOf(firstPage.get('Link')) ?? '')
+      .get(`/feed${nextLinkOf(firstPage.get('Link')) ?? ''}`)
       .set('Authorization', auth);
 
     assert.deepEqual(idsOf(firstPage.body), [first.id, second.id]);

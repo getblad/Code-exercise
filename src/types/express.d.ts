@@ -1,4 +1,4 @@
-import type { Principal } from '../modules/auth/principal';
+import type { Principal } from '../modules/auth/auth.types';
 
 declare global {
   namespace Express {

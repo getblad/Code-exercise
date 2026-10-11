@@ -7,7 +7,8 @@ import { BookRepository } from '../../src/modules/books/book.repository';
 import { BookService } from '../../src/modules/books/book.service';
 import { FeedRepository } from '../../src/modules/feed/feed.repository';
 import { FeedService } from '../../src/modules/feed/feed.service';
-import { type UserProfile, UserRepository } from '../../src/modules/users/user.repository';
+import { UserRepository } from '../../src/modules/users/user.repository';
+import type { UserProfile } from '../../src/modules/users/user.types';
 
 export const ADMIN: UserProfile = {
   id: '64b000000000000000000001',
@@ -32,6 +33,7 @@ export function buildTestApp(checkDatabase: () => Promise<void> = () => Promise.
     authService: new AuthService(users, tokens),
     bookService: new BookService(books),
     feedService: new FeedService(feed),
+    trustProxyHops: 0,
   });
 
   const authorize = (profile: UserProfile): string => {

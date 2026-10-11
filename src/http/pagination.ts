@@ -25,5 +25,5 @@ export function setNextPageLink(req: Request, res: Response, nextCursor: string 
   if (nextCursor === undefined) return;
   const next = new URL(req.originalUrl, 'http://localhost');
   next.searchParams.set('cursor', nextCursor);
-  res.setHeader('Link', `<${next.pathname}${next.search}>; rel="next"`);
+  res.setHeader('Link', `<${next.search}>; rel="next"`);
 }

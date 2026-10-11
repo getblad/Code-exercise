@@ -19,6 +19,7 @@ export interface AppDependencies {
   authService: AuthService;
   bookService: BookService;
   feedService: FeedService;
+  trustProxyHops: number;
 }
 
 export function createApp({
@@ -27,9 +28,11 @@ export function createApp({
   authService,
   bookService,
   feedService,
+  trustProxyHops,
 }: AppDependencies): Express {
   const app = express();
 
+  app.set('trust proxy', trustProxyHops);
   app.use(helmet());
   app.use(createRequestLogger(logger));
   app.use(express.json({ limit: '100kb' }));

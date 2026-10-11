@@ -1,27 +1,11 @@
 import { BookModel } from '../books/book.model';
-import { type BookRecord, toBookRecord } from '../books/book.repository';
-
-export interface RankedBook extends BookRecord {
-  rankScore: number;
-}
-
-export interface RankPosition {
-  score: number;
-  id: string;
-}
-
-export interface RankedBooksQuery {
-  libraryIds: string[];
-  country: string;
-  sameCountry: boolean;
-  after: RankPosition | undefined;
-  limit: number;
-}
+import { toBookRecord } from '../books/book.repository';
+import type { RankedBook, RankedBookSource, RankedBooksQuery } from './feed.types';
 
 const SAME_COUNTRY_INDEX = 'feed_country_rank';
 const OTHER_COUNTRIES_INDEX = 'feed_rank';
 
-export class FeedRepository {
+export class FeedRepository implements RankedBookSource {
   async findRanked(query: RankedBooksQuery): Promise<RankedBook[]> {
     const books = await this.rankedQuery(query).lean();
     return books.map((book) => ({ ...toBookRecord(book), rankScore: book.rankScore }));

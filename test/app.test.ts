@@ -133,11 +133,11 @@ describe('errorHandler', () => {
 describe('parseEnv', () => {
   it('applies defaults to optional variables', () => {
     assert.deepEqual(parseEnv({ MONGO_URI: 'mongodb://localhost:27017/books', JWT_SECRET }), {
-      NODE_ENV: 'development',
       PORT: 3000,
       LOG_LEVEL: 'info',
       MONGO_URI: 'mongodb://localhost:27017/books',
       SEED_ON_STARTUP: false,
+      TRUST_PROXY_HOPS: 0,
       JWT_SECRET,
       JWT_TTL_SECONDS: 3600,
     });

@@ -1,6 +1,6 @@
-import type { Principal } from '../auth/principal';
-import type { BookRecord } from '../books/book.repository';
-import type { FeedRepository, RankedBook, RankPosition } from './feed.repository';
+import type { Principal } from '../auth/auth.types';
+import type { BookRecord } from '../books/book.types';
+import type { RankedBook, RankedBookSource, RankPosition } from './feed.types';
 
 export type FeedPhase = 'same' | 'other';
 
@@ -14,7 +14,7 @@ export interface FeedPage {
 }
 
 export class FeedService {
-  constructor(private readonly feed: FeedRepository) {}
+  constructor(private readonly feed: RankedBookSource) {}
 
   async getFeed(
     principal: Principal,

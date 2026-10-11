@@ -1,19 +1,7 @@
-import { UserModel, type UserRole } from './user.model';
+import { UserModel } from './user.model';
+import type { UserCredentials, UserProfile, UserStore } from './user.types';
 
-export interface UserCredentials {
-  id: string;
-  role: UserRole;
-  passwordHash: string;
-}
-
-export interface UserProfile {
-  id: string;
-  role: UserRole;
-  country: string;
-  libraryIds: string[];
-}
-
-export class UserRepository {
+export class UserRepository implements UserStore {
   async findCredentialsByUsername(username: string): Promise<UserCredentials | null> {
     const user = await UserModel.findOne({ username }).select('+passwordHash').lean();
     if (!user) return null;
