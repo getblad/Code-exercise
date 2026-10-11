@@ -132,6 +132,7 @@ describe('parseEnv', () => {
       PORT: 3000,
       LOG_LEVEL: 'info',
       MONGO_URI: 'mongodb://localhost:27017/books',
+      SEED_ON_STARTUP: false,
     });
   });
 

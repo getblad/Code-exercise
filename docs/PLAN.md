@@ -5,7 +5,7 @@ Created 2026-10-07. Tasks run one at a time, on the owner's command. Every decis
 | Batch | Status                                                                                                  |
 | ----- | ------------------------------------------------------------------------------------------------------- |
 | 1     | Approved 2026-10-08. D2, D7 and D8 revised 2026-10-11 (TypeScript 7, Oxlint, tests on compiled output). |
-| 2     | Proposed                                                                                                |
+| 2     | Approved 2026-10-11.                                                                                    |
 | 3     | Proposed                                                                                                |
 
 ## Scope (from the assignment)
@@ -94,7 +94,7 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | ---- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | T1   | Scaffold: git, tsconfig, oxlint/prettier, mocha/c8, ADR template, `/health` liveness + one test                                              | D1, D2, D3, D7, D8, D22 → ADR 0001–0006 |
 | T2   | Platform core: env config, pino logging, problem-details errors, Mongo connect, health readiness, graceful shutdown, compose with Mongo only | D4, D5, D6 → ADR 0007; layout → 0008    |
-| T3   | Data model: Library/User/Book schemas, `computeRankScore`, indexes, idempotent seed                                                          | D10, D16, D17                           |
+| T3   | Data model: Library/User/Book schemas, `computeRankScore`, indexes, idempotent seed                                                          | D10 → 0009, D17 → 0010 (D16 routine)    |
 | T4   | Auth: `POST /login`, `requireAuth`, typed principal, login rate limit                                                                        | D11                                     |
 | T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12, D13, D14, D15                      |
 | T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18                                     |

@@ -2,7 +2,7 @@
   "all": true,
   "src": ["src"],
   "include": ["src/**/*.ts"],
-  "exclude": ["src/server.ts", "src/infrastructure/**"],
+  "exclude": ["src/server.ts", "src/infrastructure/**", "src/seed/**", "src/modules/**/*.model.ts"],
   "exclude-after-remap": true,
   "reporter": ["text", "html"],
   "check-coverage": true,

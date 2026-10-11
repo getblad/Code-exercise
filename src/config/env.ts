@@ -8,6 +8,7 @@ const envSchema = z.object({
   MONGO_URI: z
     .string()
     .regex(/^mongodb(\+srv)?:\/\//, 'must be a mongodb:// or mongodb+srv:// URI'),
+  SEED_ON_STARTUP: z.stringbool().default(false),
 });
 
 export type Env = z.infer<typeof envSchema>;

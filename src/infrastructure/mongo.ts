@@ -15,6 +15,12 @@ export async function connectMongo(uri: string, logger: Logger): Promise<void> {
   });
 }
 
+export async function ensureIndexes(
+  models: readonly { init(): Promise<unknown> }[],
+): Promise<void> {
+  await Promise.all(models.map((model) => model.init()));
+}
+
 export async function pingMongo(): Promise<void> {
   const { db, readyState } = mongoose.connection;
   if (readyState !== mongoose.ConnectionStates.connected || db === undefined) {
