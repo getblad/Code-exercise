@@ -8,6 +8,8 @@ Created 2026-10-07. Tasks run one at a time, on the owner's command. Every decis
 | 2     | Approved 2026-10-11.                                                                                    |
 | 3     | Approved 2026-10-11.                                                                                    |
 
+All tasks T1–T9 are complete as of 2026-10-11. The README was verified on a fresh clone: `npm ci`, `npm run check`, `npm run test:int` and the Docker quick start with every curl example.
+
 ## Scope (from the assignment)
 
 - REST CRUD for Books (Express + TypeScript + Mongoose). Users and Libraries are seeded only.
@@ -102,7 +104,7 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18 → 0013                              |
 | T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20 → 0014                          |
 | T8   | Integration test + scale proof: mongodb-memory-server test, explain with no SORT stage, 1M bulk seed                                         | D19 → 0015                              |
-| T9   | README, ADR index, final privacy and quality pass                                                                                            | D21                                     |
+| T9   | README, ADR index, final privacy and quality pass                                                                                            | D21 (routine: README with curl)         |
 
 ### Verification per task
 
