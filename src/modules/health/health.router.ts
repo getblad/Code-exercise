@@ -1,9 +1,15 @@
 import { Router } from 'express';
+import { ServiceUnavailableError } from '../../errors/app-error';
 
-export function createHealthRouter(): Router {
+export function createHealthRouter(checkDatabase: () => Promise<void>): Router {
   const router = Router();
 
-  router.get('/health', (_req, res) => {
+  router.get('/health', async (_req, res) => {
+    try {
+      await checkDatabase();
+    } catch (cause) {
+      throw new ServiceUnavailableError('Database unavailable', { cause });
+    }
     res.json({ status: 'ok' });
   });
 

@@ -9,7 +9,7 @@
     "node": ">=22.12"
   },
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch src/server.ts | pino-pretty",
     "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc -p tsconfig.build.json",
     "start": "node dist/server.js",
     "typecheck": "tsc --noEmit",
@@ -23,7 +23,11 @@
   },
   "dependencies": {
     "express": "^5.2.1",
-    "helmet": "^8.3.0"
+    "helmet": "^8.3.0",
+    "mongoose": "^9.11.1",
+    "pino": "^10.4.0",
+    "pino-http": "^11.0.0",
+    "zod": "^4.6.5"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",
@@ -35,6 +39,7 @@
     "mocha": "^12.0.3",
     "oxlint": "^1.87.0",
     "oxlint-tsgolint": "^7.0.2004",
+    "pino-pretty": "^13.2.0",
     "prettier": "^3.9.9",
     "sinon": "^22.1.0",
     "supertest": "^7.3.1",

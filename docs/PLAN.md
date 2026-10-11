@@ -23,15 +23,13 @@ Created 2026-10-07. Tasks run one at a time, on the owner's command. Every decis
 ```
 docs/adr/                 0000-template.md, NNNN-kebab-title.md
 src/
-  server.ts               composition root: env → logger → mongo → indexes → seed → listen → shutdown
-  app.ts                  createApp(deps): middleware, public router, requireAuth, protected routers, errors
-  config/env.ts           zod-validated env → typed config
-  common/
-    errors/               app-error.ts, problem-details.ts, error-handler.ts
-    http/                 parse.ts, principal.ts, cursor.ts, link-header.ts
-    logger.ts
-    validation.ts
-  db/mongo.ts
+  server.ts               entry point: wiring only (env → logger → lifecycle → mongo → app → listen)
+  app.ts                  createApp(deps): middleware pipeline and routers
+  config/env.ts           .env loading + zod-validated, typed config
+  infrastructure/         logger, mongo connection, http server start/stop, process lifecycle
+  middleware/             request-logger, not-found, error-handler (+ require-auth in T4)
+  errors/                 app-error.ts (AppError hierarchy)
+  http/                   request parsing, cursor, Link header helpers (from T4)
   modules/
     auth/                 auth.router, auth.service, auth.schemas, token.service, password-hasher, require-auth
     users/                user.model, user.repository
@@ -95,12 +93,12 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | Task | Goal                                                                                                                                         | Decisions recorded                      |
 | ---- | -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
 | T1   | Scaffold: git, tsconfig, oxlint/prettier, mocha/c8, ADR template, `/health` liveness + one test                                              | D1, D2, D3, D7, D8, D22 → ADR 0001–0006 |
-| T2   | Platform core: env config, pino logging, problem-details errors, Mongo connect, health readiness, graceful shutdown, compose with Mongo only | D4, D5, D6, D9                          |
+| T2   | Platform core: env config, pino logging, problem-details errors, Mongo connect, health readiness, graceful shutdown, compose with Mongo only | D4, D5, D6 → ADR 0007; layout → 0008    |
 | T3   | Data model: Library/User/Book schemas, `computeRankScore`, indexes, idempotent seed                                                          | D10, D16, D17                           |
 | T4   | Auth: `POST /login`, `requireAuth`, typed principal, login rate limit                                                                        | D11                                     |
 | T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12, D13, D14, D15                      |
 | T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18                                     |
-| T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D20                                     |
+| T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20                                 |
 | T8   | Integration test + scale proof: mongodb-memory-server test, explain with no SORT stage, 1M bulk seed                                         | D19                                     |
 | T9   | README, ADR index, final privacy and quality pass                                                                                            | D21                                     |
 
