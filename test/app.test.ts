@@ -2,15 +2,15 @@ import assert from 'node:assert/strict';
 import express from 'express';
 import mongoose from 'mongoose';
 import request from 'supertest';
-import { createApp } from '../src/app';
 import { parseEnv } from '../src/config/env';
-import { createLogger } from '../src/infrastructure/logger';
 import { errorHandler } from '../src/middleware/error-handler';
+import { ADMIN, buildTestApp } from './helpers/test-app';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+const JWT_SECRET = 'a-jwt-secret-of-at-least-thirty-two-chars';
 
-function buildApp(checkDatabase: () => Promise<void> = () => Promise.resolve()) {
-  return createApp({ logger: createLogger('silent'), checkDatabase });
+function buildApp(checkDatabase?: () => Promise<void>) {
+  return buildTestApp(checkDatabase).app;
 }
 
 function appFailingWith(error: unknown) {
@@ -48,7 +48,12 @@ describe('app', () => {
   });
 
   it('answers unknown routes with 404 problem details carrying the caller request id', async () => {
-    const res = await request(buildApp()).get('/nope').set('X-Request-Id', 'trace-42');
+    const { app, authorize } = buildTestApp();
+
+    const res = await request(app)
+      .get('/nope')
+      .set('Authorization', authorize(ADMIN))
+      .set('X-Request-Id', 'trace-42');
 
     assert.equal(res.status, 404);
     assert.match(res.get('Content-Type') ?? '', /^application\/problem\+json/);
@@ -127,23 +132,25 @@ describe('errorHandler', () => {
 
 describe('parseEnv', () => {
   it('applies defaults to optional variables', () => {
-    assert.deepEqual(parseEnv({ MONGO_URI: 'mongodb://localhost:27017/books' }), {
+    assert.deepEqual(parseEnv({ MONGO_URI: 'mongodb://localhost:27017/books', JWT_SECRET }), {
       NODE_ENV: 'development',
       PORT: 3000,
       LOG_LEVEL: 'info',
       MONGO_URI: 'mongodb://localhost:27017/books',
       SEED_ON_STARTUP: false,
+      JWT_SECRET,
+      JWT_TTL_SECONDS: 3600,
     });
   });
 
   it('names every invalid variable without echoing its value', () => {
     assert.throws(
-      () => parseEnv({ PORT: 'not-a-port' }),
+      () => parseEnv({ PORT: 'not-a-port', JWT_SECRET: 'too-short-secret' }),
       (err: unknown) =>
         err instanceof Error &&
-        err.message.includes('PORT') &&
-        err.message.includes('MONGO_URI') &&
-        !err.message.includes('not-a-port'),
+        ['PORT', 'MONGO_URI', 'JWT_SECRET'].every((name) => err.message.includes(name)) &&
+        !err.message.includes('not-a-port') &&
+        !err.message.includes('too-short-secret'),
     );
   });
 });

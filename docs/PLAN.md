@@ -29,7 +29,8 @@ src/
   infrastructure/         logger, mongo connection, http server start/stop, process lifecycle
   middleware/             request-logger, not-found, error-handler (+ require-auth in T4)
   errors/                 app-error.ts (AppError hierarchy)
-  http/                   request parsing, cursor, Link header helpers (from T4)
+  validation/             zod helpers: parseInput (→ 400 problem), shared schemas
+  types/                  Express Request augmentation (req.principal)
   modules/
     auth/                 auth.router, auth.service, auth.schemas, token.service, password-hasher, require-auth
     users/                user.model, user.repository
@@ -95,7 +96,7 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | T1   | Scaffold: git, tsconfig, oxlint/prettier, mocha/c8, ADR template, `/health` liveness + one test                                              | D1, D2, D3, D7, D8, D22 → ADR 0001–0006 |
 | T2   | Platform core: env config, pino logging, problem-details errors, Mongo connect, health readiness, graceful shutdown, compose with Mongo only | D4, D5, D6 → ADR 0007; layout → 0008    |
 | T3   | Data model: Library/User/Book schemas, `computeRankScore`, indexes, idempotent seed                                                          | D10 → 0009, D17 → 0010 (D16 routine)    |
-| T4   | Auth: `POST /login`, `requireAuth`, typed principal, login rate limit                                                                        | D11                                     |
+| T4   | Auth: `POST /login`, `requireAuth`, typed principal, login rate limit                                                                        | D11 → 0011                              |
 | T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12, D13, D14, D15                      |
 | T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18                                     |
 | T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20                                 |

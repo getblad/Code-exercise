@@ -9,6 +9,8 @@ const envSchema = z.object({
     .string()
     .regex(/^mongodb(\+srv)?:\/\//, 'must be a mongodb:// or mongodb+srv:// URI'),
   SEED_ON_STARTUP: z.stringbool().default(false),
+  JWT_SECRET: z.string().min(32),
+  JWT_TTL_SECONDS: z.coerce.number().int().positive().default(3600),
 });
 
 export type Env = z.infer<typeof envSchema>;

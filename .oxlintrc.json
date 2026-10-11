@@ -8,6 +8,8 @@
     "eslint/no-console": "error",
     "eslint/eqeqeq": "error",
     "eslint/no-useless-constructor": "error",
+    "eslint/no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    "oxc/no-async-endpoint-handlers": "off",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "error",
     "typescript/consistent-type-assertions": ["error", { "assertionStyle": "never" }],

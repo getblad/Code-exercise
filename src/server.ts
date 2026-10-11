@@ -4,9 +4,12 @@ import { closeHttpServer, startHttpServer } from './infrastructure/http-server';
 import { createLifecycle } from './infrastructure/lifecycle';
 import { createLogger } from './infrastructure/logger';
 import { connectMongo, disconnectMongo, ensureIndexes, pingMongo } from './infrastructure/mongo';
+import { AuthService } from './modules/auth/auth.service';
+import { TokenService } from './modules/auth/token.service';
 import { BookModel } from './modules/books/book.model';
 import { LibraryModel } from './modules/libraries/library.model';
 import { UserModel } from './modules/users/user.model';
+import { UserRepository } from './modules/users/user.repository';
 import { seedDatabase } from './seed/seed';
 
 async function start(): Promise<void> {
@@ -20,7 +23,11 @@ async function start(): Promise<void> {
     await ensureIndexes([LibraryModel, UserModel, BookModel]);
     if (env.SEED_ON_STARTUP) await seedDatabase(logger);
 
-    const app = createApp({ logger, checkDatabase: pingMongo });
+    const authService = new AuthService(
+      new UserRepository(),
+      new TokenService(env.JWT_SECRET, env.JWT_TTL_SECONDS),
+    );
+    const app = createApp({ logger, checkDatabase: pingMongo, authService });
     const server = await startHttpServer(app, env.PORT);
     lifecycle.onShutdown(() => closeHttpServer(server));
     logger.info({ port: env.PORT }, 'Server listening');

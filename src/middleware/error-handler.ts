@@ -45,6 +45,7 @@ export const errorHandler: ErrorRequestHandler = (err: unknown, req, res, next) 
     requestId: typeof req.id === 'string' ? req.id : undefined,
     errors: problem.errors,
   };
+  if (problem.status === 401) res.setHeader('WWW-Authenticate', 'Bearer');
   res.status(problem.status).type('application/problem+json').json(body);
 };
 

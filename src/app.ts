@@ -4,20 +4,29 @@ import type { Logger } from 'pino';
 import { errorHandler } from './middleware/error-handler';
 import { notFoundHandler } from './middleware/not-found';
 import { createRequestLogger } from './middleware/request-logger';
+import { createRequireAuth } from './middleware/require-auth';
+import { createAuthRouter } from './modules/auth/auth.router';
+import type { AuthService } from './modules/auth/auth.service';
 import { createHealthRouter } from './modules/health/health.router';
 
 export interface AppDependencies {
   logger: Logger;
   checkDatabase: () => Promise<void>;
+  authService: AuthService;
 }
 
-export function createApp({ logger, checkDatabase }: AppDependencies): Express {
+export function createApp({ logger, checkDatabase, authService }: AppDependencies): Express {
   const app = express();
 
   app.use(helmet());
   app.use(createRequestLogger(logger));
   app.use(express.json({ limit: '100kb' }));
+
   app.use(createHealthRouter(checkDatabase));
+  app.use(createAuthRouter(authService));
+
+  app.use(createRequireAuth(authService));
+
   app.use(notFoundHandler);
   app.use(errorHandler);
 

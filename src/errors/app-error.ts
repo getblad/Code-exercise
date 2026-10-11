@@ -19,6 +19,24 @@ export class AppError extends Error {
   }
 }
 
+export class ValidationError extends AppError {
+  constructor(errors: FieldError[]) {
+    super(400, 'Validation failed', { errors });
+  }
+}
+
+export class UnauthorizedError extends AppError {
+  constructor(message: string) {
+    super(401, message);
+  }
+}
+
+export class TooManyRequestsError extends AppError {
+  constructor(message: string) {
+    super(429, message);
+  }
+}
+
 export class NotFoundError extends AppError {
   constructor(message: string) {
     super(404, message);
