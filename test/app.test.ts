@@ -153,4 +153,16 @@ describe('parseEnv', () => {
         !err.message.includes('too-short-secret'),
     );
   });
+
+  it('refuses a placeholder JWT secret, however long', () => {
+    const placeholder = 'replace-with-a-random-string-of-at-least-32-characters';
+
+    assert.throws(
+      () => parseEnv({ MONGO_URI: 'mongodb://localhost:27017/books', JWT_SECRET: placeholder }),
+      (err: unknown) =>
+        err instanceof Error &&
+        err.message.includes('JWT_SECRET: is a placeholder') &&
+        !err.message.includes(placeholder),
+    );
+  });
 });

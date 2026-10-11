@@ -1,6 +1,6 @@
 # 0007. Configuration, error responses and logging
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [0020](0020-fifth-review-corrections.md)
 - **Date:** 2026-10-08
 - **Approved by:** Project owner
 - **Plan reference:** D4, D5, D6 · **Implemented in:** T2

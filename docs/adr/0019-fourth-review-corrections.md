@@ -1,6 +1,6 @@
 # 0019. Fourth review corrections
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [0020](0020-fifth-review-corrections.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner (asked for every fourth-review finding to be fixed)
 - **Plan reference:** fourth post-delivery review · **Amends:** [0011](0011-authentication.md), [0014](0014-containerization.md)

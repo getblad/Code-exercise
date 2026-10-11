@@ -43,15 +43,15 @@ npm run dev                 # tsx watch mode with pretty-printed logs
 
 ## Configuration
 
-| Variable           | Required | Default | Purpose                                                                                                 |
-| ------------------ | -------- | ------- | ------------------------------------------------------------------------------------------------------- |
-| `MONGO_URI`        | yes      | —       | `mongodb://` or `mongodb+srv://` connection string                                                      |
-| `JWT_SECRET`       | yes      | —       | HS256 signing secret, at least 32 characters                                                            |
-| `JWT_TTL_SECONDS`  | no       | `3600`  | Token lifetime                                                                                          |
-| `PORT`             | no       | `3000`  | HTTP port                                                                                               |
-| `LOG_LEVEL`        | no       | `info`  | `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `silent`                                            |
-| `SEED_ON_STARTUP`  | no       | `false` | Insert any missing demo data once per database, then record a `seed_runs` marker so it never runs again |
-| `TRUST_PROXY_HOPS` | no       | `0`     | Number of reverse proxies in front of the API, so client IPs (and the login rate limit) are correct     |
+| Variable           | Required | Default | Purpose                                                                                                                            |
+| ------------------ | -------- | ------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `MONGO_URI`        | yes      | —       | `mongodb://` or `mongodb+srv://` connection string                                                                                 |
+| `JWT_SECRET`       | yes      | —       | HS256 signing secret, at least 32 random characters; placeholder values (such as the one in `.env.example`) are refused at startup |
+| `JWT_TTL_SECONDS`  | no       | `3600`  | Token lifetime                                                                                                                     |
+| `PORT`             | no       | `3000`  | HTTP port                                                                                                                          |
+| `LOG_LEVEL`        | no       | `info`  | `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `silent`                                                                       |
+| `SEED_ON_STARTUP`  | no       | `false` | Insert any missing demo data once per database, then record a `seed_runs` marker so it never runs again                            |
+| `TRUST_PROXY_HOPS` | no       | `0`     | Number of reverse proxies in front of the API, so client IPs (and the login rate limit) are correct                                |
 
 - Invalid configuration stops startup with exit code 1, naming each bad variable but never its value.
 - Under Docker, `docker-compose.yml` sets `MONGO_URI`, `PORT`, `NODE_ENV=production` and `SEED_ON_STARTUP` itself, and the secrets come from `.env`.
@@ -272,3 +272,4 @@ Every significant decision is recorded in [`docs/adr`](docs/adr). The task plan 
 | [0017](docs/adr/0017-second-review-corrections.md)           | Second review corrections                      |
 | [0018](docs/adr/0018-third-review-corrections.md)            | Third review corrections                       |
 | [0019](docs/adr/0019-fourth-review-corrections.md)           | Fourth review corrections                      |
+| [0020](docs/adr/0020-fifth-review-corrections.md)            | Fifth review corrections                       |

@@ -29,6 +29,8 @@ describe('password hashing', () => {
   it('salts every hash and rejects malformed stored values', async () => {
     assert.notEqual(await hashPassword('same'), await hashPassword('same'));
     assert.equal(await verifyPassword('password123', 'not-a-hash'), false);
+    const nonPowerOfTwoCost = `scrypt$1000$8$1$AAAA$${Buffer.alloc(64).toString('base64')}`;
+    assert.equal(await verifyPassword('password123', nonPowerOfTwoCost), false);
   });
 
   it('verifies with the cost parameters stored in each hash, so the cost can be raised later', async () => {

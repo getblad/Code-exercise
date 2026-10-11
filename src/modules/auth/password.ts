@@ -42,6 +42,7 @@ function parseStoredHash(storedHash: string): StoredHash | undefined {
   if (!Object.values(params).every((value) => Number.isSafeInteger(value) && value > 0)) {
     return undefined;
   }
+  if (params.N < 2 || (params.N & (params.N - 1)) !== 0) return undefined;
 
   const keyBytes = Buffer.from(key, 'base64');
   if (keyBytes.length !== KEY_LENGTH) return undefined;
