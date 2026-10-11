@@ -1,6 +1,6 @@
 # 0014. Containerization: multi-stage image and compose stack
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [0019](0019-fourth-review-corrections.md)
 - **Date:** 2026-10-08 (D9), 2026-10-11 (D20)
 - **Approved by:** Project owner
 - **Plan reference:** D9, D20 · **Implemented in:** T2 (MongoDB service), T7

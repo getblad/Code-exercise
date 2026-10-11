@@ -1,5 +1,5 @@
 import { model, Schema, type Types } from 'mongoose';
-import { isCountryCode } from '../../validation/country-codes';
+import { COUNTRY_CODE_MESSAGE, isCountryCode } from '../../validation/country-codes';
 
 export const USER_ROLES = ['admin', 'user'] as const;
 export type UserRole = (typeof USER_ROLES)[number];
@@ -21,7 +21,7 @@ const userSchema = new Schema<User>(
       uppercase: true,
       validate: {
         validator: isCountryCode,
-        message: 'country must be an ISO 3166-1 alpha-2 country code',
+        message: `{PATH} ${COUNTRY_CODE_MESSAGE}`,
       },
     },
     libraries: [{ type: Schema.Types.ObjectId, ref: 'Library' }],

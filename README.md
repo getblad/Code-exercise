@@ -271,3 +271,4 @@ Every significant decision is recorded in [`docs/adr`](docs/adr). The task plan 
 | [0016](docs/adr/0016-code-review-corrections.md)             | Code review corrections                        |
 | [0017](docs/adr/0017-second-review-corrections.md)           | Second review corrections                      |
 | [0018](docs/adr/0018-third-review-corrections.md)            | Third review corrections                       |
+| [0019](docs/adr/0019-fourth-review-corrections.md)           | Fourth review corrections                      |

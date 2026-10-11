@@ -118,6 +118,18 @@ describe('POST /books', () => {
     }
   });
 
+  it('returns a Location relative to the request path, with or without a trailing slash', async () => {
+    const { app, books, authorize } = buildTestApp();
+    const auth = authorize(ADMIN);
+    books.create.resolves(stored);
+
+    const plain = await request(app).post('/books').set('Authorization', auth).send(input);
+    const slashed = await request(app).post('/books/').set('Authorization', auth).send(input);
+
+    assert.equal(plain.get('Location'), `books/${BOOK_ID}`);
+    assert.equal(slashed.get('Location'), BOOK_ID);
+  });
+
   it('treats ids case-insensitively when checking membership', async () => {
     const { app, books, authorize } = buildTestApp();
     books.create.resolves(stored);

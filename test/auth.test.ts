@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { randomBytes, scryptSync } from 'node:crypto';
 import { decode } from 'jsonwebtoken';
 import sinon from 'sinon';
 import request from 'supertest';
@@ -28,6 +29,22 @@ describe('password hashing', () => {
   it('salts every hash and rejects malformed stored values', async () => {
     assert.notEqual(await hashPassword('same'), await hashPassword('same'));
     assert.equal(await verifyPassword('password123', 'not-a-hash'), false);
+  });
+
+  it('verifies with the cost parameters stored in each hash, so the cost can be raised later', async () => {
+    const salt = randomBytes(16);
+    const key = scryptSync('password123', salt, 64, { N: 1024, r: 8, p: 1 });
+    const olderCostHash = [
+      'scrypt',
+      1024,
+      8,
+      1,
+      salt.toString('base64'),
+      key.toString('base64'),
+    ].join('$');
+
+    assert.equal(await verifyPassword('password123', olderCostHash), true);
+    assert.match(await hashPassword('password123'), /^scrypt\$16384\$8\$1\$/);
   });
 });
 

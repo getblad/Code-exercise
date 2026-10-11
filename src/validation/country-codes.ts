@@ -13,6 +13,8 @@ const ISO_3166_ALPHA_2 = new Set(
    VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW`.split(/\s+/),
 );
 
+export const COUNTRY_CODE_MESSAGE = 'must be an ISO 3166-1 alpha-2 country code';
+
 export function isCountryCode(code: string): boolean {
   return ISO_3166_ALPHA_2.has(code);
 }

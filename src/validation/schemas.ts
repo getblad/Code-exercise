@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { isCountryCode } from './country-codes';
+import { COUNTRY_CODE_MESSAGE, isCountryCode } from './country-codes';
 
 export const objectIdSchema = z
   .string()
@@ -10,7 +10,7 @@ export const countryCodeSchema = z
   .string()
   .trim()
   .toUpperCase()
-  .refine(isCountryCode, 'must be an ISO 3166-1 alpha-2 country code');
+  .refine(isCountryCode, COUNTRY_CODE_MESSAGE);
 
 export const paginationQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),

@@ -1,5 +1,5 @@
 import { model, Schema, type Types } from 'mongoose';
-import { isCountryCode } from '../../validation/country-codes';
+import { COUNTRY_CODE_MESSAGE, isCountryCode } from '../../validation/country-codes';
 
 export interface Book {
   title: string;
@@ -21,7 +21,7 @@ const bookSchema = new Schema<Book>(
       uppercase: true,
       validate: {
         validator: (code: string | null) => code === null || isCountryCode(code),
-        message: 'authorCountry must be an ISO 3166-1 alpha-2 country code',
+        message: `{PATH} ${COUNTRY_CODE_MESSAGE}`,
       },
     },
     publishedDate: { type: Date, required: true },
