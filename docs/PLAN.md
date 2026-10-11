@@ -31,6 +31,7 @@ src/
   errors/                 app-error.ts (AppError hierarchy)
   validation/             zod helpers: parseInput (→ 400 problem), shared schemas
   types/                  Express Request augmentation (req.principal)
+  http/                   pagination: cursor codec + Link header
   modules/
     auth/                 auth.router, auth.service, auth.schemas, token.service, password-hasher, require-auth
     users/                user.model, user.repository
@@ -97,7 +98,7 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | T2   | Platform core: env config, pino logging, problem-details errors, Mongo connect, health readiness, graceful shutdown, compose with Mongo only | D4, D5, D6 → ADR 0007; layout → 0008    |
 | T3   | Data model: Library/User/Book schemas, `computeRankScore`, indexes, idempotent seed                                                          | D10 → 0009, D17 → 0010 (D16 routine)    |
 | T4   | Auth: `POST /login`, `requireAuth`, typed principal, login rate limit                                                                        | D11 → 0011                              |
-| T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12, D13, D14, D15                      |
+| T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12–D15 → 0012                          |
 | T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18                                     |
 | T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20                                 |
 | T8   | Integration test + scale proof: mongodb-memory-server test, explain with no SORT stage, 1M bulk seed                                         | D19                                     |
