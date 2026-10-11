@@ -9,6 +9,8 @@ import { TokenService } from './modules/auth/token.service';
 import { BookModel } from './modules/books/book.model';
 import { BookRepository } from './modules/books/book.repository';
 import { BookService } from './modules/books/book.service';
+import { FeedRepository } from './modules/feed/feed.repository';
+import { FeedService } from './modules/feed/feed.service';
 import { LibraryModel } from './modules/libraries/library.model';
 import { UserModel } from './modules/users/user.model';
 import { UserRepository } from './modules/users/user.repository';
@@ -29,8 +31,13 @@ async function start(): Promise<void> {
       new UserRepository(),
       new TokenService(env.JWT_SECRET, env.JWT_TTL_SECONDS),
     );
-    const bookService = new BookService(new BookRepository());
-    const app = createApp({ logger, checkDatabase: pingMongo, authService, bookService });
+    const app = createApp({
+      logger,
+      checkDatabase: pingMongo,
+      authService,
+      bookService: new BookService(new BookRepository()),
+      feedService: new FeedService(new FeedRepository()),
+    });
     const server = await startHttpServer(app, env.PORT);
     lifecycle.onShutdown(() => closeHttpServer(server));
     logger.info({ port: env.PORT }, 'Server listening');

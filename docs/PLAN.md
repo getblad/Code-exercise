@@ -99,7 +99,7 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | T3   | Data model: Library/User/Book schemas, `computeRankScore`, indexes, idempotent seed                                                          | D10 → 0009, D17 → 0010 (D16 routine)    |
 | T4   | Auth: `POST /login`, `requireAuth`, typed principal, login rate limit                                                                        | D11 → 0011                              |
 | T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12–D15 → 0012                          |
-| T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18                                     |
+| T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18 → 0013                              |
 | T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20                                 |
 | T8   | Integration test + scale proof: mongodb-memory-server test, explain with no SORT stage, 1M bulk seed                                         | D19                                     |
 | T9   | README, ADR index, final privacy and quality pass                                                                                            | D21                                     |

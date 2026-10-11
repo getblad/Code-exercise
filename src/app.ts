@@ -9,6 +9,8 @@ import { createAuthRouter } from './modules/auth/auth.router';
 import type { AuthService } from './modules/auth/auth.service';
 import { createBookRouter } from './modules/books/book.router';
 import type { BookService } from './modules/books/book.service';
+import { createFeedRouter } from './modules/feed/feed.router';
+import type { FeedService } from './modules/feed/feed.service';
 import { createHealthRouter } from './modules/health/health.router';
 
 export interface AppDependencies {
@@ -16,6 +18,7 @@ export interface AppDependencies {
   checkDatabase: () => Promise<void>;
   authService: AuthService;
   bookService: BookService;
+  feedService: FeedService;
 }
 
 export function createApp({
@@ -23,6 +26,7 @@ export function createApp({
   checkDatabase,
   authService,
   bookService,
+  feedService,
 }: AppDependencies): Express {
   const app = express();
 
@@ -35,6 +39,7 @@ export function createApp({
 
   app.use(createRequireAuth(authService));
   app.use(createBookRouter(bookService));
+  app.use(createFeedRouter(feedService));
 
   app.use(notFoundHandler);
   app.use(errorHandler);

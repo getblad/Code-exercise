@@ -24,12 +24,12 @@ export interface ListBooksQuery {
 export class BookRepository {
   async create(data: BookData): Promise<BookRecord> {
     const book = await BookModel.create(toDocument(data));
-    return toRecord(book.toObject());
+    return toBookRecord(book.toObject());
   }
 
   async findById(id: string, libraryIds: string[]): Promise<BookRecord | null> {
     const book = await BookModel.findOne({ _id: id, library: { $in: libraryIds } }).lean();
-    return book && toRecord(book);
+    return book && toBookRecord(book);
   }
 
   async list({ libraryIds, afterId, limit }: ListBooksQuery): Promise<BookRecord[]> {
@@ -40,7 +40,7 @@ export class BookRepository {
       .sort({ _id: -1 })
       .limit(limit)
       .lean();
-    return books.map(toRecord);
+    return books.map(toBookRecord);
   }
 
   async replace(id: string, libraryIds: string[], data: BookData): Promise<BookRecord | null> {
@@ -49,7 +49,7 @@ export class BookRepository {
       toDocument(data),
       { returnDocument: 'after', runValidators: true },
     ).lean();
-    return book && toRecord(book);
+    return book && toBookRecord(book);
   }
 
   async delete(id: string, libraryIds: string[]): Promise<boolean> {
@@ -62,7 +62,7 @@ function toDocument({ libraryId, ...fields }: BookData): Book {
   return { ...fields, library: new Types.ObjectId(libraryId) };
 }
 
-function toRecord(book: Book & { _id: Types.ObjectId }): BookRecord {
+export function toBookRecord(book: Book & { _id: Types.ObjectId }): BookRecord {
   return {
     id: book._id.toString(),
     title: book.title,

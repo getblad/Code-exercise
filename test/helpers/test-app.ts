@@ -5,6 +5,8 @@ import { AuthService } from '../../src/modules/auth/auth.service';
 import { TokenService } from '../../src/modules/auth/token.service';
 import { BookRepository } from '../../src/modules/books/book.repository';
 import { BookService } from '../../src/modules/books/book.service';
+import { FeedRepository } from '../../src/modules/feed/feed.repository';
+import { FeedService } from '../../src/modules/feed/feed.service';
 import { type UserProfile, UserRepository } from '../../src/modules/users/user.repository';
 
 export const ADMIN: UserProfile = {
@@ -22,12 +24,14 @@ const TOKEN_TTL_SECONDS = 3600;
 export function buildTestApp(checkDatabase: () => Promise<void> = () => Promise.resolve()) {
   const users = sinon.createStubInstance(UserRepository);
   const books = sinon.createStubInstance(BookRepository);
+  const feed = sinon.createStubInstance(FeedRepository);
   const tokens = new TokenService(TEST_SECRET, TOKEN_TTL_SECONDS);
   const app = createApp({
     logger: createLogger('silent'),
     checkDatabase,
     authService: new AuthService(users, tokens),
     bookService: new BookService(books),
+    feedService: new FeedService(feed),
   });
 
   const authorize = (profile: UserProfile): string => {
@@ -35,5 +39,5 @@ export function buildTestApp(checkDatabase: () => Promise<void> = () => Promise.
     return `Bearer ${tokens.issue({ userId: profile.id, role: profile.role }).token}`;
   };
 
-  return { app, users, books, tokens, authorize };
+  return { app, users, books, feed, tokens, authorize };
 }
