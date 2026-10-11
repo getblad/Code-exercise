@@ -1,6 +1,23 @@
 services:
+  app:
+    build: .
+    init: true
+    restart: unless-stopped
+    ports:
+      - '3000:3000'
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      MONGO_URI: mongodb://mongo:27017/books
+      SEED_ON_STARTUP: 'true'
+    depends_on:
+      mongo:
+        condition: service_healthy
+
   mongo:
     image: mongo:8.0
+    restart: unless-stopped
     ports:
       - '127.0.0.1:27017:27017'
     volumes:

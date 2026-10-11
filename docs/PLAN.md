@@ -6,7 +6,7 @@ Created 2026-10-07. Tasks run one at a time, on the owner's command. Every decis
 | ----- | ------------------------------------------------------------------------------------------------------- |
 | 1     | Approved 2026-10-08. D2, D7 and D8 revised 2026-10-11 (TypeScript 7, Oxlint, tests on compiled output). |
 | 2     | Approved 2026-10-11.                                                                                    |
-| 3     | Proposed                                                                                                |
+| 3     | Approved 2026-10-11.                                                                                    |
 
 ## Scope (from the assignment)
 
@@ -100,7 +100,7 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | T4   | Auth: `POST /login`, `requireAuth`, typed principal, login rate limit                                                                        | D11 → 0011                              |
 | T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12–D15 → 0012                          |
 | T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18 → 0013                              |
-| T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20                                 |
+| T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20 → 0014                          |
 | T8   | Integration test + scale proof: mongodb-memory-server test, explain with no SORT stage, 1M bulk seed                                         | D19                                     |
 | T9   | README, ADR index, final privacy and quality pass                                                                                            | D21                                     |
 

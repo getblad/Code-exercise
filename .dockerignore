@@ -1,0 +1,12 @@
+node_modules
+dist
+.test-build
+coverage
+.git
+.env
+.env.*
+test
+docs
+*.md
+.vscode
+.claude
