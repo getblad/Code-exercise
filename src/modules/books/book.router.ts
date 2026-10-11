@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { childLocation } from '../../http/location';
 import { decodeCursor, encodeCursor, setNextPageLink } from '../../http/pagination';
 import { getPrincipal } from '../../middleware/require-auth';
 import { parseInput } from '../../validation/parse-input';
@@ -16,7 +17,7 @@ export function createBookRouter(books: BookService): Router {
 
   router.post('/books', async (req, res) => {
     const book = await books.create(getPrincipal(req), parseInput(bookInputSchema, req.body));
-    res.status(201).location(`/books/${book.id}`).json(toBookResponse(book));
+    res.status(201).location(childLocation(req, book.id)).json(toBookResponse(book));
   });
 
   router.get('/books', async (req, res) => {

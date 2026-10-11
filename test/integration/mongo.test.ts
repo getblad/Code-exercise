@@ -11,7 +11,7 @@ import { type FeedPosition, FeedService } from '../../src/modules/feed/feed.serv
 import { createLogger } from '../../src/infrastructure/logger';
 import { UserModel } from '../../src/modules/users/user.model';
 import { UserRepository } from '../../src/modules/users/user.repository';
-import { seedDatabase } from '../../src/seed/seed';
+import { SEED_RUNS_COLLECTION, seedDatabase } from '../../src/seed/seed';
 import { SEED_BOOKS } from '../../src/seed/seed-data';
 import { pickCyclic } from '../../src/utils/array';
 
@@ -206,7 +206,7 @@ describe('MongoDB integration', () => {
   });
 
   it('seeds the demo data only once, so a deleted demo book stays deleted', async () => {
-    await mongoose.connection.collection('seed_runs').deleteMany({});
+    await mongoose.connection.collection(SEED_RUNS_COLLECTION).deleteMany({});
     const logger = createLogger('silent');
     const deletedBookId = pickCyclic(SEED_BOOKS, 0)._id;
 

@@ -1,6 +1,6 @@
 # 0016. Code review corrections
 
-- **Status:** Accepted, amended by [0017](0017-second-review-corrections.md)
+- **Status:** Accepted, amended by [0017](0017-second-review-corrections.md) and [0018](0018-third-review-corrections.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner (asked for every review finding to be fixed)
 - **Plan reference:** post-T9 review · **Amends:** [0010](0010-stored-feed-ranking-score.md), [0012](0012-books-api-contract.md)

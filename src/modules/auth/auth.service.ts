@@ -4,9 +4,14 @@ import type { UserStore } from '../users/user.types';
 import type { IssuedToken, Principal, TokenIssuer } from './auth.types';
 import { hashPassword, verifyPassword } from './password';
 
-export class AuthService {
-  private readonly dummyHash = hashPassword(randomUUID());
+let dummyHash: Promise<string> | undefined;
 
+function getDummyHash(): Promise<string> {
+  dummyHash ??= hashPassword(randomUUID());
+  return dummyHash;
+}
+
+export class AuthService {
   constructor(
     private readonly users: UserStore,
     private readonly tokens: TokenIssuer,
@@ -17,7 +22,7 @@ export class AuthService {
     // Unknown usernames still pay for a hash check, so response time doesn't reveal which ones exist
     const passwordMatches = await verifyPassword(
       password,
-      user?.passwordHash ?? (await this.dummyHash),
+      user?.passwordHash ?? (await getDummyHash()),
     );
     if (!user || !passwordMatches) throw new UnauthorizedError('Invalid username or password');
 

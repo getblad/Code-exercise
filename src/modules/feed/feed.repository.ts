@@ -1,5 +1,5 @@
 import { BookModel } from '../books/book.model';
-import { toBookRecord } from '../books/book.repository';
+import { toBookRecord } from '../books/book.mapper';
 import type { RankedBook, RankedBookSource, RankedBooksQuery } from './feed.types';
 
 const SAME_COUNTRY_INDEX = 'feed_country_rank';

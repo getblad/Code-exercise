@@ -1,6 +1,6 @@
 # 0009. Store the author's country on the book
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [0018](0018-third-review-corrections.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner
 - **Plan reference:** D10 · **Implemented in:** T3

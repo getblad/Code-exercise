@@ -79,6 +79,8 @@ There are 18 books spread across the three libraries, with IDs `64c0000000000000
 docker compose exec app node dist/scripts/bulk-books.js --count 1000000
 ```
 
+The container runs the compiled scripts from `dist/scripts/`. Locally, `npm run seed:bulk -- --count 1000000` runs the TypeScript source directly. `rank:recompute` works the same way (`node dist/scripts/recompute-rank-scores.js` in the container).
+
 ## API
 
 `/health` and `/login` are public. Every other endpoint requires `Authorization: Bearer <token>`.
@@ -235,15 +237,15 @@ docs/adr/              architecture decision records
 
 ## Scripts
 
-| Script                                  | Purpose                                                            |
-| --------------------------------------- | ------------------------------------------------------------------ |
-| `npm run dev`                           | Run with reload and pretty logs                                    |
-| `npm run build` / `npm start`           | Compile to `dist/` / run the compiled server                       |
-| `npm run check`                         | Lint, format check and unit tests                                  |
-| `npm test` / `test:int` / `coverage`    | Unit, integration, or both with coverage                           |
-| `npm run lint` / `format` / `typecheck` | Individual quality tools                                           |
-| `npm run seed:bulk -- --count N`        | Insert N random books (`MONGO_URI` from the environment or `.env`) |
-| `npm run rank:recompute`                | Recompute every stored score after the scoring constants change    |
+| Script                                  | Purpose                                                                                                      |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `npm run dev`                           | Run with reload and pretty logs                                                                              |
+| `npm run build` / `npm start`           | Compile to `dist/` / run the compiled server                                                                 |
+| `npm run check`                         | Lint, format check and unit tests                                                                            |
+| `npm test` / `test:int` / `coverage`    | Unit, integration, or both with coverage                                                                     |
+| `npm run lint` / `format` / `typecheck` | Individual quality tools                                                                                     |
+| `npm run seed:bulk -- --count N`        | Insert N random books, run from source via tsx (no build needed; `MONGO_URI` from the environment or `.env`) |
+| `npm run rank:recompute`                | Recompute every stored score after the scoring constants change (also from source via tsx)                   |
 
 ## Architecture decisions
 
@@ -268,3 +270,4 @@ Every significant decision is recorded in [`docs/adr`](docs/adr). The task plan 
 | [0015](docs/adr/0015-integration-tests-and-scale-proof.md)   | Integration tests and scale proof              |
 | [0016](docs/adr/0016-code-review-corrections.md)             | Code review corrections                        |
 | [0017](docs/adr/0017-second-review-corrections.md)           | Second review corrections                      |
+| [0018](docs/adr/0018-third-review-corrections.md)            | Third review corrections                       |

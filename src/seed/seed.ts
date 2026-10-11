@@ -7,6 +7,7 @@ import { LibraryModel } from '../modules/libraries/library.model';
 import { UserModel } from '../modules/users/user.model';
 import { SEED_BOOKS, SEED_LIBRARIES, SEED_USERS } from './seed-data';
 
+export const SEED_RUNS_COLLECTION = 'seed_runs';
 const SEED_ID = 'demo-data-v1';
 
 interface SeedRun {
@@ -15,7 +16,7 @@ interface SeedRun {
 }
 
 export async function seedDatabase(logger: Logger): Promise<void> {
-  const seedRuns = mongoose.connection.collection<SeedRun>('seed_runs');
+  const seedRuns = mongoose.connection.collection<SeedRun>(SEED_RUNS_COLLECTION);
   if (await seedRuns.findOne({ _id: SEED_ID })) {
     logger.info({ seed: SEED_ID }, 'Seed data already applied');
     return;

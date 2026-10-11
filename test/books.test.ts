@@ -50,7 +50,7 @@ describe('POST /books', () => {
       .send(input);
 
     assert.equal(res.status, 201);
-    assert.equal(res.get('Location'), `/books/${BOOK_ID}`);
+    assert.equal(res.get('Location'), `books/${BOOK_ID}`);
     assert.deepEqual(res.body, response);
     assert.deepEqual(books.create.args, [
       [
@@ -70,6 +70,7 @@ describe('POST /books', () => {
     const res = await request(app).post('/books').set('Authorization', authorize(ADMIN)).send({
       title: '  ',
       author: 'X',
+      authorCountry: 'ZZ',
       publishedDate: '2999-01-01',
       pages: 0,
       libraryId: 'x',
@@ -78,7 +79,7 @@ describe('POST /books', () => {
 
     assert.equal(res.status, 400);
     const paths = (problem.parse(res.body).errors ?? []).map(({ path }) => path).toSorted();
-    assert.deepEqual(paths, ['', 'libraryId', 'pages', 'publishedDate', 'title']);
+    assert.deepEqual(paths, ['', 'authorCountry', 'libraryId', 'pages', 'publishedDate', 'title']);
     assert.equal(books.create.callCount, 0);
   });
 

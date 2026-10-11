@@ -1,4 +1,5 @@
 import { model, Schema, type Types } from 'mongoose';
+import { isCountryCode } from '../../validation/country-codes';
 
 export const USER_ROLES = ['admin', 'user'] as const;
 export type UserRole = (typeof USER_ROLES)[number];
@@ -14,7 +15,15 @@ export interface User {
 const userSchema = new Schema<User>(
   {
     username: { type: String, required: true, trim: true, unique: true },
-    country: { type: String, required: true, uppercase: true, match: /^[A-Z]{2}$/ },
+    country: {
+      type: String,
+      required: true,
+      uppercase: true,
+      validate: {
+        validator: isCountryCode,
+        message: 'country must be an ISO 3166-1 alpha-2 country code',
+      },
+    },
     libraries: [{ type: Schema.Types.ObjectId, ref: 'Library' }],
     role: { type: String, enum: USER_ROLES, default: 'user' },
     passwordHash: { type: String, required: true, select: false },

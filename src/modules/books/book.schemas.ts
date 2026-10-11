@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { objectIdSchema, paginationQuerySchema } from '../../validation/schemas';
+import { countryCodeSchema, objectIdSchema, paginationQuerySchema } from '../../validation/schemas';
 
 const MAX_UTC_OFFSET_MS = 14 * 60 * 60 * 1000;
 
@@ -12,13 +12,7 @@ const latestToday = (): string =>
 export const bookInputSchema = z.strictObject({
   title: text,
   author: text,
-  authorCountry: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .regex(/^[A-Z]{2}$/, 'must be an ISO 3166-1 alpha-2 country code')
-    .nullable()
-    .default(null),
+  authorCountry: countryCodeSchema.nullable().default(null),
   publishedDate: z.iso
     .date()
     .refine((date) => date <= latestToday(), 'must not be in the future')

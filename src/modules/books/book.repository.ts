@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { toBookRecord } from './book.mapper';
 import { type Book, BookModel } from './book.model';
 import type { BookData, BookRecord, BookStore, ListBooksQuery } from './book.types';
 
@@ -41,16 +42,4 @@ export class BookRepository implements BookStore {
 
 function toDocument({ libraryId, ...fields }: BookData): Book {
   return { ...fields, library: new Types.ObjectId(libraryId) };
-}
-
-export function toBookRecord(book: Book & { _id: Types.ObjectId }): BookRecord {
-  return {
-    id: book._id.toString(),
-    title: book.title,
-    author: book.author,
-    authorCountry: book.authorCountry,
-    publishedDate: book.publishedDate,
-    pages: book.pages,
-    libraryId: book.library.toString(),
-  };
 }
