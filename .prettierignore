@@ -1,0 +1,4 @@
+dist/
+.test-build/
+coverage/
+package-lock.json
