@@ -43,15 +43,15 @@ npm run dev                 # tsx watch mode with pretty-printed logs
 
 ## Configuration
 
-| Variable           | Required | Default | Purpose                                                                                             |
-| ------------------ | -------- | ------- | --------------------------------------------------------------------------------------------------- |
-| `MONGO_URI`        | yes      | —       | `mongodb://` or `mongodb+srv://` connection string                                                  |
-| `JWT_SECRET`       | yes      | —       | HS256 signing secret, at least 32 characters                                                        |
-| `JWT_TTL_SECONDS`  | no       | `3600`  | Token lifetime                                                                                      |
-| `PORT`             | no       | `3000`  | HTTP port                                                                                           |
-| `LOG_LEVEL`        | no       | `info`  | `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `silent`                                        |
-| `SEED_ON_STARTUP`  | no       | `false` | Insert the demo data once, on the first start against an empty database                             |
-| `TRUST_PROXY_HOPS` | no       | `0`     | Number of reverse proxies in front of the API, so client IPs (and the login rate limit) are correct |
+| Variable           | Required | Default | Purpose                                                                                                 |
+| ------------------ | -------- | ------- | ------------------------------------------------------------------------------------------------------- |
+| `MONGO_URI`        | yes      | —       | `mongodb://` or `mongodb+srv://` connection string                                                      |
+| `JWT_SECRET`       | yes      | —       | HS256 signing secret, at least 32 characters                                                            |
+| `JWT_TTL_SECONDS`  | no       | `3600`  | Token lifetime                                                                                          |
+| `PORT`             | no       | `3000`  | HTTP port                                                                                               |
+| `LOG_LEVEL`        | no       | `info`  | `fatal`, `error`, `warn`, `info`, `debug`, `trace`, `silent`                                            |
+| `SEED_ON_STARTUP`  | no       | `false` | Insert any missing demo data once per database, then record a `seed_runs` marker so it never runs again |
+| `TRUST_PROXY_HOPS` | no       | `0`     | Number of reverse proxies in front of the API, so client IPs (and the login rate limit) are correct     |
 
 - Invalid configuration stops startup with exit code 1, naming each bad variable but never its value.
 - Under Docker, `docker-compose.yml` sets `MONGO_URI`, `PORT`, `NODE_ENV=production` and `SEED_ON_STARTUP` itself, and the secrets come from `.env`.
@@ -76,7 +76,7 @@ Every demo user's password is `password123`.
 There are 18 books spread across the three libraries, with IDs `64c000000000000000000001` to `…018`. To add random books for load testing:
 
 ```bash
-docker compose exec app node dist/seed/bulk-books.js --count 1000000
+docker compose exec app node dist/scripts/bulk-books.js --count 1000000
 ```
 
 ## API
@@ -200,16 +200,17 @@ npm run test:int   # integration tests on a real MongoDB 8.0.32 (downloads mongo
 npm run coverage   # unit + integration under c8 (thresholds: 85% lines, 80% branches, 85% functions)
 ```
 
-- **Unit tests (38):** Mocha, Sinon and supertest exercise the real HTTP pipeline and services, with repositories stubbed. They cover:
+- **Unit tests:** Mocha, Sinon and supertest exercise the real HTTP pipeline and services, with repositories stubbed. They cover:
   - Login, tokens and rate limiting.
-  - Books CRUD, including the 400, 403 and 404 rules.
+  - Books CRUD, including the 400, 403 and 404 rules, case-insensitive ids and the publication-date boundary.
   - Feed ordering and paging.
   - Error mapping and configuration.
-- **Integration tests (5):** run on `mongodb-memory-server`, or against any server via `MONGO_TEST_URI=mongodb://…`. They cover:
+- **Integration tests:** run on `mongodb-memory-server`, or against any server via `MONGO_TEST_URI=mongodb://…`. They cover:
   - Library scoping and keyset paging.
   - Feed order compared with a brute-force sort, including ties.
   - Query plans without an in-memory sort.
-- **Coverage:** about 97% lines and 94% branches.
+  - Seeding only once, so deleted demo books stay deleted.
+- **Coverage:** `npm run coverage` enforces the thresholds above and prints the current figures.
 
 ## Project structure
 
@@ -225,7 +226,9 @@ src/
   validation/          zod request parsing and shared schemas
   modules/             auth, users, libraries, books, feed, health; each service depends on a store
                        interface in *.types.ts, which its Mongoose repository implements
-  seed/                demo data and bulk loader
+  seed/                demo data and the run-once seeder
+  scripts/             operational scripts: bulk loader, rank-score recompute, shared runner
+  utils/               small generic helpers
 test/                  unit tests, helpers and integration/
 docs/adr/              architecture decision records
 ```
@@ -264,3 +267,4 @@ Every significant decision is recorded in [`docs/adr`](docs/adr). The task plan 
 | [0014](docs/adr/0014-containerization.md)                    | Containerization                               |
 | [0015](docs/adr/0015-integration-tests-and-scale-proof.md)   | Integration tests and scale proof              |
 | [0016](docs/adr/0016-code-review-corrections.md)             | Code review corrections                        |
+| [0017](docs/adr/0017-second-review-corrections.md)           | Second review corrections                      |

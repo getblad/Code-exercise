@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import sinon from 'sinon';
 import request from 'supertest';
 import { z } from 'zod';
 import type { BookRecord } from '../src/modules/books/book.types';
@@ -91,6 +92,29 @@ describe('POST /books', () => {
 
     assert.equal(res.status, 403);
     assert.equal(books.create.callCount, 0);
+  });
+
+  it('accepts a date that is already today somewhere on Earth and rejects the day after', async () => {
+    const clock = sinon.useFakeTimers({ now: new Date('2026-10-11T12:00:00Z'), toFake: ['Date'] });
+    try {
+      const { app, books, authorize } = buildTestApp();
+      const auth = authorize(ADMIN);
+      books.create.resolves(stored);
+
+      const todayInUtcPlus14 = await request(app)
+        .post('/books')
+        .set('Authorization', auth)
+        .send({ ...input, publishedDate: '2026-10-12' });
+      const tomorrowEverywhere = await request(app)
+        .post('/books')
+        .set('Authorization', auth)
+        .send({ ...input, publishedDate: '2026-10-13' });
+
+      assert.equal(todayInUtcPlus14.status, 201);
+      assert.equal(tomorrowEverywhere.status, 400);
+    } finally {
+      clock.restore();
+    }
   });
 
   it('treats ids case-insensitively when checking membership', async () => {

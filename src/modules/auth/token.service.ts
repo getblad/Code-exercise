@@ -2,22 +2,11 @@ import { sign, TokenExpiredError, verify } from 'jsonwebtoken';
 import { z } from 'zod';
 import { UnauthorizedError } from '../../errors/app-error';
 import { objectIdSchema } from '../../validation/schemas';
-import { USER_ROLES, type UserRole } from '../users/user.model';
+import type { IssuedToken, TokenClaims, TokenIssuer } from './auth.types';
 
-const claimsSchema = z.object({ sub: objectIdSchema, role: z.enum(USER_ROLES) });
+const claimsSchema = z.object({ sub: objectIdSchema });
 
-export interface TokenClaims {
-  userId: string;
-  role: UserRole;
-}
-
-export interface IssuedToken {
-  token: string;
-  tokenType: 'Bearer';
-  expiresIn: number;
-}
-
-export class TokenService {
+export class TokenService implements TokenIssuer {
   constructor(
     private readonly secret: string,
     private readonly ttlSeconds: number,
@@ -32,7 +21,7 @@ export class TokenService {
     return { token, tokenType: 'Bearer', expiresIn: this.ttlSeconds };
   }
 
-  verify(token: string): TokenClaims {
+  verify(token: string): string {
     let payload: unknown;
     try {
       payload = verify(token, this.secret, { algorithms: ['HS256'] });
@@ -44,6 +33,6 @@ export class TokenService {
 
     const claims = claimsSchema.safeParse(payload);
     if (!claims.success) throw new UnauthorizedError('Invalid token');
-    return { userId: claims.data.sub, role: claims.data.role };
+    return claims.data.sub;
   }
 }

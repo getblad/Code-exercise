@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { decode } from 'jsonwebtoken';
 import sinon from 'sinon';
 import request from 'supertest';
 import { z } from 'zod';
@@ -51,7 +52,8 @@ describe('POST /login', () => {
 
     assert.equal(res.status, 200);
     const { token } = tokenResponse.parse(res.body);
-    assert.deepEqual(tokens.verify(token), { userId: ADMIN.id, role: 'admin' });
+    assert.equal(tokens.verify(token), ADMIN.id);
+    assert.equal(z.object({ role: z.string() }).parse(decode(token)).role, 'admin');
   });
 
   it('answers a wrong password and an unknown user with the same 401', async () => {

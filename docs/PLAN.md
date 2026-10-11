@@ -10,7 +10,7 @@ Created 2026-10-07. Tasks run one at a time, on the owner's command. Every decis
 
 All tasks T1–T9 are complete as of 2026-10-11. The README was verified on a fresh clone: `npm ci`, `npm run check`, `npm run test:int` and the Docker quick start with every curl example.
 
-A post-delivery code review found 15 issues; all were fixed on 2026-10-11 (ADR 0016).
+A post-delivery code review found 15 issues; all were fixed on 2026-10-11 (ADR 0016). A second review found 9 maintenance issues; all were fixed the same day (ADR 0017).
 
 ## Scope (from the assignment)
 
@@ -43,7 +43,9 @@ src/
     books/                book.model, book.repository, book.service, book.router, book.schemas, book.mapper, rank-score
     feed/                 feed.repository, feed.service, feed.router, feed.schemas
     health/               health.router
-  seed/                   seed-data.ts, seed.ts, bulk-books.ts
+  seed/                   seed-data.ts, seed.ts (run-once demo seeder)
+  scripts/                bulk-books.ts, recompute-rank-scores.ts, run-script.ts
+  utils/                  small generic helpers
 test/
   helpers/test-app.ts
   app.test.ts

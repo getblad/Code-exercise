@@ -1,6 +1,6 @@
 # 0015. Database integration tests and scale proof
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [0017](0017-second-review-corrections.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner
 - **Plan reference:** D19 · **Implemented in:** T8

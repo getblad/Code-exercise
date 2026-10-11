@@ -6,6 +6,7 @@
     "src/server.ts",
     "src/infrastructure/**",
     "src/seed/**",
+    "src/scripts/**",
     "src/modules/**/*.model.ts",
     "src/**/*.types.ts",
     "src/**/*.d.ts"

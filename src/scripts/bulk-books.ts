@@ -3,8 +3,9 @@ import type { Types } from 'mongoose';
 import { z } from 'zod';
 import { BookModel } from '../modules/books/book.model';
 import { computeRankScore } from '../modules/books/rank-score';
+import { LIBRARY_IDS } from '../seed/seed-data';
+import { pickCyclic } from '../utils/array';
 import { runMongoScript } from './run-script';
-import { LIBRARY_IDS } from './seed-data';
 
 const COUNTRIES = ['US', 'GB', 'DE', 'FR', 'ES', 'IT', 'JP', 'BR', 'IN', null];
 const PROGRESS_EVERY = 100_000;
@@ -49,16 +50,10 @@ function randomBook(sequence: number, libraries: readonly Types.ObjectId[]) {
   return {
     title: `Generated book ${sequence.toString()}`,
     author: `Author ${(sequence % 10_000).toString()}`,
-    authorCountry: pick(COUNTRIES, sequence),
+    authorCountry: pickCyclic(COUNTRIES, sequence),
     publishedDate,
     pages,
-    library: pick(libraries, sequence),
+    library: pickCyclic(libraries, sequence),
     rankScore: computeRankScore(pages, publishedDate),
   };
-}
-
-function pick<T>(items: readonly T[], index: number): T {
-  const item = items[index % items.length];
-  if (item === undefined) throw new Error('Cannot pick from an empty list');
-  return item;
 }

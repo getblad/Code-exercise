@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { objectIdSchema, paginationQuerySchema } from '../../validation/schemas';
 
-const EARLIEST_TIMEZONE_OFFSET_MS = 14 * 60 * 60 * 1000;
+const MAX_UTC_OFFSET_MS = 14 * 60 * 60 * 1000;
 
 const text = z.string().trim().min(1).max(200);
 
 // UTC+14 reaches a new day first, so its calendar date is the latest "today" anywhere on Earth
 const latestToday = (): string =>
-  new Date(Date.now() + EARLIEST_TIMEZONE_OFFSET_MS).toISOString().slice(0, 10);
+  new Date(Date.now() + MAX_UTC_OFFSET_MS).toISOString().slice(0, 10);
 
 export const bookInputSchema = z.strictObject({
   title: text,

@@ -22,8 +22,8 @@
     "test:all": "mocha && mocha --config .mocharc.integration.json",
     "coverage": "npm run test:build && c8 npm run test:all",
     "check": "npm run lint && npm run format:check && npm test",
-    "seed:bulk": "node dist/seed/bulk-books.js",
-    "rank:recompute": "node dist/seed/recompute-rank-scores.js"
+    "seed:bulk": "node dist/scripts/bulk-books.js",
+    "rank:recompute": "node dist/scripts/recompute-rank-scores.js"
   },
   "dependencies": {
     "express": "^5.2.1",

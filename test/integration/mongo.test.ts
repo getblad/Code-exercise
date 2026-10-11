@@ -6,10 +6,14 @@ import type { Principal } from '../../src/modules/auth/auth.types';
 import { type Book, BookModel } from '../../src/modules/books/book.model';
 import { BookRepository } from '../../src/modules/books/book.repository';
 import { computeRankScore } from '../../src/modules/books/rank-score';
-import { FeedRepository } from '../../src/modules/feed/feed.repository';
+import { FeedRepository, rankedBooksQuery } from '../../src/modules/feed/feed.repository';
 import { type FeedPosition, FeedService } from '../../src/modules/feed/feed.service';
+import { createLogger } from '../../src/infrastructure/logger';
 import { UserModel } from '../../src/modules/users/user.model';
 import { UserRepository } from '../../src/modules/users/user.repository';
+import { seedDatabase } from '../../src/seed/seed';
+import { SEED_BOOKS } from '../../src/seed/seed-data';
+import { pickCyclic } from '../../src/utils/array';
 
 const MONGO_VERSION = '8.0.32';
 const MEMBER_LIBRARY = new Types.ObjectId();
@@ -46,12 +50,6 @@ function makeBook(
     library,
     rankScore: computeRankScore(pages, publishedDate),
   };
-}
-
-function pick<T>(items: readonly T[], index: number): T {
-  const item = items[index % items.length];
-  if (item === undefined) throw new Error('Cannot pick from an empty list');
-  return item;
 }
 
 function planStages(plan: unknown): string[] {
@@ -135,8 +133,8 @@ describe('MongoDB integration', () => {
     const libraries = [MEMBER_LIBRARY, SECOND_MEMBER_LIBRARY, FOREIGN_LIBRARY];
     const varied = Array.from({ length: 60 }, (_, index) =>
       makeBook(
-        pick(libraries, index),
-        pick(COUNTRIES, index * 7),
+        pickCyclic(libraries, index),
+        pickCyclic(COUNTRIES, index * 7),
         50 + ((index * 37) % 900),
         1700 + ((index * 13) % 300),
       ),
@@ -177,14 +175,13 @@ describe('MongoDB integration', () => {
   it('serves both feed phases in index order without an in-memory sort', async () => {
     const docs = Array.from({ length: 2000 }, (_, index) =>
       makeBook(
-        pick([MEMBER_LIBRARY, SECOND_MEMBER_LIBRARY], index),
-        pick(COUNTRIES, index),
+        pickCyclic([MEMBER_LIBRARY, SECOND_MEMBER_LIBRARY], index),
+        pickCyclic(COUNTRIES, index),
         50 + ((index * 37) % 1500),
         1600 + ((index * 13) % 420),
       ),
     );
     await BookModel.insertMany(docs);
-    const feed = new FeedRepository();
     const limit = 21;
     const middle = docs.toSorted((a, b) => b.rankScore - a.rankScore)[1000];
     const cursors = [undefined, middle && { score: middle.rankScore, id: middle._id.toString() }];
@@ -192,7 +189,7 @@ describe('MongoDB integration', () => {
     for (const sameCountry of [true, false]) {
       for (const after of cursors) {
         const query = { libraryIds: MEMBER_LIBRARY_IDS, country: 'US', sameCountry, after, limit };
-        const explanation: unknown = await feed.rankedQuery(query).explain('executionStats');
+        const explanation: unknown = await rankedBooksQuery(query).explain('executionStats');
         const { queryPlanner, executionStats } = explainSchema.parse(explanation);
         const context = JSON.stringify({
           sameCountry,
@@ -206,6 +203,19 @@ describe('MongoDB integration', () => {
         assert.ok(executionStats.totalKeysExamined < limit * 3, context);
       }
     }
+  });
+
+  it('seeds the demo data only once, so a deleted demo book stays deleted', async () => {
+    await mongoose.connection.collection('seed_runs').deleteMany({});
+    const logger = createLogger('silent');
+    const deletedBookId = pickCyclic(SEED_BOOKS, 0)._id;
+
+    await seedDatabase(logger);
+    await BookModel.deleteOne({ _id: deletedBookId });
+    await seedDatabase(logger);
+
+    assert.equal(await BookModel.countDocuments({ _id: deletedBookId }), 0);
+    assert.equal(await BookModel.countDocuments(), SEED_BOOKS.length - 1);
   });
 
   it('loads credentials by username and profiles by id', async () => {

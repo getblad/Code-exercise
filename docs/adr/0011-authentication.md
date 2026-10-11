@@ -1,6 +1,6 @@
 # 0011. Authentication: seeded users, scrypt, short-lived JWT
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [0017](0017-second-review-corrections.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner
 - **Plan reference:** D11 · **Implemented in:** T3 (password hashing), T4
