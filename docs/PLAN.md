@@ -101,7 +101,7 @@ Each task ends green on `npm run check` (lint + format check + compile + tests).
 | T5   | Books CRUD: POST/GET list/GET one/PUT/DELETE with membership rules and cursor pagination                                                     | D12–D15 → 0012                          |
 | T6   | Feed: two-phase keyset query, cursor, Link header                                                                                            | D18 → 0013                              |
 | T7   | Docker: multi-stage Dockerfile, full compose with healthchecks                                                                               | D9, D20 → 0014                          |
-| T8   | Integration test + scale proof: mongodb-memory-server test, explain with no SORT stage, 1M bulk seed                                         | D19                                     |
+| T8   | Integration test + scale proof: mongodb-memory-server test, explain with no SORT stage, 1M bulk seed                                         | D19 → 0015                              |
 | T9   | README, ADR index, final privacy and quality pass                                                                                            | D21                                     |
 
 ### Verification per task

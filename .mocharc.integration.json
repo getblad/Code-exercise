@@ -1,0 +1,5 @@
+{
+  "spec": [".test-build/test/integration/*.test.js"],
+  "node-option": ["enable-source-maps"],
+  "timeout": 120000
+}

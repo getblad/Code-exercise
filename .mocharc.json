@@ -1,4 +1,4 @@
 {
-  "spec": [".test-build/test/**/*.test.js"],
+  "spec": [".test-build/test/*.test.js"],
   "node-option": ["enable-source-maps"]
 }
