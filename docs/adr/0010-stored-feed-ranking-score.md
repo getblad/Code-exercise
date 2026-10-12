@@ -1,6 +1,6 @@
 # 0010. Stored, time-invariant feed ranking score
 
-- **Status:** Accepted, amended by [0016](0016-code-review-corrections.md)
+- **Status:** Accepted, amended by [0016](0016-code-review-corrections.md) and [0021](0021-publication-date-floor-in-rank-score.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner
 - **Plan reference:** D17 · **Implemented in:** T3 (score, indexes), T6 (feed query)

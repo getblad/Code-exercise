@@ -10,7 +10,7 @@ Created 2026-10-07. Tasks run one at a time, on the owner's command. Every decis
 
 All tasks T1–T9 are complete as of 2026-10-11. The README was verified on a fresh clone: `npm ci`, `npm run check`, `npm run test:int` and the Docker quick start with every curl example.
 
-A post-delivery code review found 15 issues; all were fixed on 2026-10-11 (ADR 0016). A second review found 9 maintenance issues; all were fixed the same day (ADR 0017). A third review found 7 issues; all were fixed the same day (ADR 0018). A fourth review found 5 low-severity issues, fixed the same day (ADR 0019). A fifth review found a placeholder-secret risk and a hash-parsing edge case, both fixed (ADR 0020).
+A post-delivery code review found 15 issues; all were fixed on 2026-10-11 (ADR 0016). A second review found 9 maintenance issues; all were fixed the same day (ADR 0017). A third review found 7 issues; all were fixed the same day (ADR 0018). A fourth review found 5 low-severity issues, fixed the same day (ADR 0019). A fifth review found a placeholder-secret risk and a hash-parsing edge case, both fixed (ADR 0020). On 2026-10-12 the uncapped age term in the score was fixed with a floor on publication dates (ADR 0021).
 
 ## Scope (from the assignment)
 

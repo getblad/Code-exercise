@@ -166,6 +166,7 @@ Each response echoes its `X-Request-Id`, which matches the `requestId` in error 
 3. Within each group, books are ordered by score:
    - 80% pages, capped at 2000.
    - 20% age, where 500 years counts as 1, so both parts span roughly 0 to 1 and pages really carry four times the weight.
+   - Dates before 1500 count as 1500, so an ancient text can't outweigh length.
    - One year of age is worth one page.
 4. Each book stores its score when it is written. Age is measured from a fixed point, not from "now", so the order never changes over time and can be indexed.
 5. Each group is read with its own index already in score order, with no sorting at request time, and pages continue from a cursor.
@@ -192,7 +193,7 @@ At 1M books, each feed query examines about 22–27 index keys.
   - A book in someone else's library returns 404, so IDs can't be probed.
   - Naming a library you don't belong to returns 403.
   - The `admin` role grants nothing extra, because the assignment defines no admin powers.
-- **Scoring:** books longer than 2000 pages get no extra credit for length, so a single outlier can't dominate the feed.
+- **Scoring:** books longer than 2000 pages get no extra credit for length, and books published before 1500 get no extra credit for age, so a single outlier can't dominate the feed.
 
 ## Testing
 
@@ -251,25 +252,26 @@ docs/adr/              architecture decision records
 
 Every significant decision is recorded in [`docs/adr`](docs/adr). The task plan is in [`docs/PLAN.md`](docs/PLAN.md).
 
-| ADR                                                          | Decision                                       |
-| ------------------------------------------------------------ | ---------------------------------------------- |
-| [0001](docs/adr/0001-record-architecture-decisions.md)       | Record architecture decisions                  |
-| [0002](docs/adr/0002-typescript-7-with-commonjs-output.md)   | TypeScript 7 with CommonJS output              |
-| [0003](docs/adr/0003-express-5-modular-architecture.md)      | Express 5, feature modules, manual composition |
-| [0004](docs/adr/0004-oxlint-and-prettier.md)                 | Oxlint with type-aware rules, and Prettier     |
-| [0005](docs/adr/0005-test-toolchain.md)                      | Mocha + Sinon on compiled output, c8 coverage  |
-| [0006](docs/adr/0006-version-control.md)                     | Version control conventions                    |
-| [0007](docs/adr/0007-configuration-errors-and-logging.md)    | Configuration, error responses and logging     |
-| [0008](docs/adr/0008-source-layout-and-process-lifecycle.md) | Source layout and process lifecycle            |
-| [0009](docs/adr/0009-author-country-on-book.md)              | Author country on the book                     |
-| [0010](docs/adr/0010-stored-feed-ranking-score.md)           | Stored, time-invariant ranking score           |
-| [0011](docs/adr/0011-authentication.md)                      | Authentication: seeded users, scrypt, JWT      |
-| [0012](docs/adr/0012-books-api-contract.md)                  | Books API contract                             |
-| [0013](docs/adr/0013-feed-query.md)                          | Feed query: two index-ordered phases           |
-| [0014](docs/adr/0014-containerization.md)                    | Containerization                               |
-| [0015](docs/adr/0015-integration-tests-and-scale-proof.md)   | Integration tests and scale proof              |
-| [0016](docs/adr/0016-code-review-corrections.md)             | Code review corrections                        |
-| [0017](docs/adr/0017-second-review-corrections.md)           | Second review corrections                      |
-| [0018](docs/adr/0018-third-review-corrections.md)            | Third review corrections                       |
-| [0019](docs/adr/0019-fourth-review-corrections.md)           | Fourth review corrections                      |
-| [0020](docs/adr/0020-fifth-review-corrections.md)            | Fifth review corrections                       |
+| ADR                                                           | Decision                                       |
+| ------------------------------------------------------------- | ---------------------------------------------- |
+| [0001](docs/adr/0001-record-architecture-decisions.md)        | Record architecture decisions                  |
+| [0002](docs/adr/0002-typescript-7-with-commonjs-output.md)    | TypeScript 7 with CommonJS output              |
+| [0003](docs/adr/0003-express-5-modular-architecture.md)       | Express 5, feature modules, manual composition |
+| [0004](docs/adr/0004-oxlint-and-prettier.md)                  | Oxlint with type-aware rules, and Prettier     |
+| [0005](docs/adr/0005-test-toolchain.md)                       | Mocha + Sinon on compiled output, c8 coverage  |
+| [0006](docs/adr/0006-version-control.md)                      | Version control conventions                    |
+| [0007](docs/adr/0007-configuration-errors-and-logging.md)     | Configuration, error responses and logging     |
+| [0008](docs/adr/0008-source-layout-and-process-lifecycle.md)  | Source layout and process lifecycle            |
+| [0009](docs/adr/0009-author-country-on-book.md)               | Author country on the book                     |
+| [0010](docs/adr/0010-stored-feed-ranking-score.md)            | Stored, time-invariant ranking score           |
+| [0011](docs/adr/0011-authentication.md)                       | Authentication: seeded users, scrypt, JWT      |
+| [0012](docs/adr/0012-books-api-contract.md)                   | Books API contract                             |
+| [0013](docs/adr/0013-feed-query.md)                           | Feed query: two index-ordered phases           |
+| [0014](docs/adr/0014-containerization.md)                     | Containerization                               |
+| [0015](docs/adr/0015-integration-tests-and-scale-proof.md)    | Integration tests and scale proof              |
+| [0016](docs/adr/0016-code-review-corrections.md)              | Code review corrections                        |
+| [0017](docs/adr/0017-second-review-corrections.md)            | Second review corrections                      |
+| [0018](docs/adr/0018-third-review-corrections.md)             | Third review corrections                       |
+| [0019](docs/adr/0019-fourth-review-corrections.md)            | Fourth review corrections                      |
+| [0020](docs/adr/0020-fifth-review-corrections.md)             | Fifth review corrections                       |
+| [0021](docs/adr/0021-publication-date-floor-in-rank-score.md) | Floor on publication dates in the rank score   |

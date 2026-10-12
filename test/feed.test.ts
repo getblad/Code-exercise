@@ -60,6 +60,14 @@ describe('computeRankScore', () => {
     );
   });
 
+  it('stops rewarding age before 1500, so ancient dates cannot outweigh length', () => {
+    assert.equal(
+      computeRankScore(100, date('0001-01-01')),
+      computeRankScore(100, date('1500-01-01')),
+    );
+    assert.ok(computeRankScore(2000, date('2020-01-01')) > computeRankScore(1, date('0001-01-01')));
+  });
+
   it('weights pages 80% and age 20%, so one year of age is worth one page', () => {
     const shorterButOlder = computeRankScore(300, date('1949-01-01'));
     const longerButNewer = computeRankScore(301, date('1950-01-01'));
