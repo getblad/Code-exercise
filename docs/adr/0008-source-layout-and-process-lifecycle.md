@@ -1,6 +1,6 @@
 # 0008. Source layout and process lifecycle
 
-- **Status:** Accepted
+- **Status:** Accepted, amended by [0022](0022-prompt-keep-alive-close-on-shutdown.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner
 - **Plan reference:** owner review of T2 · **Implemented in:** T2

@@ -11,11 +11,15 @@ export function startHttpServer(app: Express, port: number): Promise<Server> {
       }
       resolve(server);
     });
+    // Once close() has run, drop each keep-alive connection as soon as its last response is sent
+    server.on('request', (_req, res) => {
+      res.once('finish', () => {
+        if (!server.listening) server.closeIdleConnections();
+      });
+    });
   });
 }
 
 export async function closeHttpServer(server: Server): Promise<void> {
-  const closing = promisify(server.close.bind(server))();
-  server.closeIdleConnections();
-  await closing;
+  await promisify(server.close.bind(server))();
 }
