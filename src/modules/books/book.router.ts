@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { childLocation } from '../../http/location';
 import { decodeCursor, encodeCursor, setNextPageLink } from '../../http/pagination';
+import { createBookWriteRateLimiter } from '../../middleware/rate-limit';
 import { getPrincipal } from '../../middleware/require-auth';
 import { parseInput } from '../../validation/parse-input';
 import { toBookResponse } from './book.mapper';
@@ -14,8 +15,9 @@ import type { BookService } from './book.service';
 
 export function createBookRouter(books: BookService): Router {
   const router = Router();
+  const limitWrites = createBookWriteRateLimiter();
 
-  router.post('/books', async (req, res) => {
+  router.post('/books', limitWrites, async (req, res) => {
     const book = await books.create(getPrincipal(req), parseInput(bookInputSchema, req.body));
     res.status(201).location(childLocation(req, book.id)).json(toBookResponse(book));
   });
@@ -38,13 +40,13 @@ export function createBookRouter(books: BookService): Router {
     res.json(toBookResponse(await books.get(getPrincipal(req), id)));
   });
 
-  router.put('/books/:id', async (req, res) => {
+  router.put('/books/:id', limitWrites, async (req, res) => {
     const { id } = parseInput(bookIdParamsSchema, req.params);
     const input = parseInput(bookInputSchema, req.body);
     res.json(toBookResponse(await books.replace(getPrincipal(req), id, input)));
   });
 
-  router.delete('/books/:id', async (req, res) => {
+  router.delete('/books/:id', limitWrites, async (req, res) => {
     const { id } = parseInput(bookIdParamsSchema, req.params);
     await books.delete(getPrincipal(req), id);
     res.status(204).end();

@@ -1,6 +1,6 @@
 # 0012. Books API contract: access rules, PUT, pagination, validation
 
-- **Status:** Accepted, amended by [0016](0016-code-review-corrections.md) and [0018](0018-third-review-corrections.md)
+- **Status:** Accepted, amended by [0016](0016-code-review-corrections.md), [0018](0018-third-review-corrections.md) and [0023](0023-per-user-rate-limit-on-book-writes.md)
 - **Date:** 2026-10-11
 - **Approved by:** Project owner
 - **Plan reference:** D12, D13, D14, D15 · **Implemented in:** T5 (pagination reused by the feed in T6)

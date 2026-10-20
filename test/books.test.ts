@@ -282,3 +282,26 @@ describe('DELETE /books/:id', () => {
     assert.equal(missing.status, 404);
   });
 });
+
+describe('book write rate limit', () => {
+  it('limits each user to 60 changes a minute, leaving reads and other users alone', async () => {
+    const { app, books, authorize } = buildTestApp();
+    const auth = authorize(ADMIN);
+    const otherUser = authorize({ ...ADMIN, id: '64b000000000000000000002' });
+    books.delete.resolves(true);
+    books.findById.resolves(stored);
+    const deleteAs = (authorization: string) =>
+      request(app).delete(`/books/${BOOK_ID}`).set('Authorization', authorization);
+
+    const allowed = await Promise.all(Array.from({ length: 60 }, () => deleteAs(auth)));
+    const limited = await deleteAs(auth);
+    const read = await request(app).get(`/books/${BOOK_ID}`).set('Authorization', auth);
+    const fromOtherUser = await deleteAs(otherUser);
+
+    assert.ok(allowed.every(({ status }) => status === 204));
+    assert.equal(limited.status, 429);
+    assert.ok(Number(limited.get('Retry-After')) > 0);
+    assert.equal(read.status, 200);
+    assert.equal(fromOtherUser.status, 204);
+  });
+});

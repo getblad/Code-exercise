@@ -83,7 +83,7 @@ The container runs the compiled scripts from `dist/scripts/`. Locally, `npm run 
 
 ## API
 
-`/health` and `/login` are public. Every other endpoint requires `Authorization: Bearer <token>`.
+`/health` and `/login` are public. Every other endpoint requires `Authorization: Bearer <token>`. Book writes (`POST`, `PUT`, `DELETE`) are limited to 60 per minute per user.
 
 | Method | Path         | Description                                                                                                  |
 | ------ | ------------ | ------------------------------------------------------------------------------------------------------------ |
@@ -155,7 +155,7 @@ Errors use [RFC 9457](https://www.rfc-editor.org/rfc/rfc9457) `application/probl
 | 401    | Missing, invalid or expired token, or wrong credentials (`WWW-Authenticate: Bearer`) |
 | 403    | The request names a library you are not a member of                                  |
 | 404    | Not found, including books in libraries you are not a member of                      |
-| 429    | Too many login attempts                                                              |
+| 429    | Too many login attempts, or more than 60 book changes a minute                       |
 
 Each response echoes its `X-Request-Id`, which matches the `requestId` in error bodies and in the server log.
 
@@ -276,3 +276,4 @@ Every significant decision is recorded in [`docs/adr`](docs/adr). The task plan 
 | [0020](docs/adr/0020-fifth-review-corrections.md)             | Fifth review corrections                          |
 | [0021](docs/adr/0021-publication-date-floor-in-rank-score.md) | Floor on publication dates in the rank score      |
 | [0022](docs/adr/0022-prompt-keep-alive-close-on-shutdown.md)  | Close keep-alive connections promptly on shutdown |
+| [0023](docs/adr/0023-per-user-rate-limit-on-book-writes.md)   | Per-user rate limit on book writes                |
